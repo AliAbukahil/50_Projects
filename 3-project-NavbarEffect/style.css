@@ -20,6 +20,9 @@ header {
 nav {
   margin: auto;
   width: 90%;
+  /* min-height + line-height this
+  is a hack or a trick, to center some 
+  sort of text with out display flex */
   min-height: 9vh;
   line-height: 9vh;
 }
