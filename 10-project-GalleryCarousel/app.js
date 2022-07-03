@@ -20,6 +20,19 @@ const moveToImg = function (list, currentImg, targetImg) {
   targetImg.classList.add("current-img");
 };
 
+// Hide/ Show Arrows
+const hideShowArrow = function (imgs, prevBtn, nextBtn, targetIndex) {
+  if (targetIndex === 0) {
+    prevBtn.classList.add("hidden");
+    nextBtn.classList.remove("hidden");
+  } else if (targetIndex === imgs.length - 1) {
+    prevBtn.classList.remove("hidden");
+    nextBtn.classList.add("hidden");
+  } else {
+    prevBtn.classList.remove("hidden");
+    nextBtn.classList.remove("hidden");
+  }
+};
 /* 
 -----****************-------------------------------
 When we click on the right button, move images to the left
@@ -28,11 +41,10 @@ When we click on the right button, move images to the left
 nextBtn.addEventListener("click", function () {
   const currentImg = list.querySelector(".current-img");
   const nextImg = currentImg.nextElementSibling;
-  const nextIndex = imgs.findIndex(function (img) {
-    img === nextImg;
-  });
+  const nextIndex = imgs.findIndex((img) => img === nextImg);
 
   moveToImg(list, currentImg, nextImg);
+  hideShowArrow(imgs, prevBtn, nextBtn, nextIndex);
 });
 
 /* 
@@ -43,9 +55,8 @@ When we click on the left button, move images to the right
 prevBtn.addEventListener("click", function () {
   const currentImg = list.querySelector(".current-img");
   const prevImg = currentImg.previousElementSibling;
-  const prevIndex = imgs.findIndex(function (img) {
-    img === prevImg;
-  });
+  const prevIndex = imgs.findIndex((img) => img === prevImg);
 
   moveToImg(list, currentImg, prevImg);
+  hideShowArrow(imgs, prevBtn, nextBtn, prevIndex);
 });
