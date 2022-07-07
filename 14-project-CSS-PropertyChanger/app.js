@@ -3,8 +3,18 @@ const verticalPosition = document.querySelector("#position-y");
 const horizontalPosition = document.querySelector("#position-x");
 const blockSize = document.querySelector("#size");
 const shapeSelector = document.querySelector("#shape-select");
+
 const okBtn = document.querySelector("#ok-btn");
-console.log(shapeSelector);
+
+const rgbaR = document.querySelector("#rgba-r");
+const rgbaG = document.querySelector("#rgba-g");
+const rgbaB = document.querySelector("#rgba-b");
+const rgbaA = document.querySelector("#rgba-a");
+
+const rgbaContainer = document.querySelector(".rgba-container");
+const rgbaInputs = rgbaContainer.querySelectorAll("input");
+
+// console.log(rgbaInputs);
 
 // vertical Position changer
 verticalPosition.addEventListener("change", function () {
@@ -31,3 +41,13 @@ okBtn.addEventListener("click", function () {
     blockEl.style.borderRadius = "50%";
   }
 });
+
+// Background color Changer RGBA
+for (let i = 0; i < rgbaInputs.length; ++i) {
+  //console.log(rgbaInputs[i]);
+  rgbaInputs[i].addEventListener("change", function () {
+    blockEl.style.backgroundColor = `rgba(${rgbaR.value},${rgbaG.value},${rgbaB.value},${rgbaA.value})`;
+  });
+}
+
+// background-color: rgba(red, green, blue, alpha);
