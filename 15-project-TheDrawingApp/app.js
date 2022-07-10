@@ -19,7 +19,7 @@ https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
 
 const ctx = canvas.getContext("2d");
 
-//console.log(ctx);
+console.log(ctx);
 
 let size = 10;
 let isPressed = false;
@@ -85,6 +85,19 @@ decreaseBtn.addEventListener("click", function () {
 
   if (size < 1) size = 1;
   updateSize();
+});
+
+// Color Btn
+colorBtn.addEventListener("change", function (e) {
+  color = e.target.value;
+
+  console.log(e.target.value);
+  console.log(color);
+});
+
+// clear Btn
+clearBtn.addEventListener("click", function () {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 });
 
 // Updating the Stroke width Dynamically
