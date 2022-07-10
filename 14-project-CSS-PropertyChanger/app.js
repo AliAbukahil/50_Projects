@@ -46,7 +46,13 @@ okBtn.addEventListener("click", function () {
 for (let i = 0; i < rgbaInputs.length; ++i) {
   //console.log(rgbaInputs[i]);
   rgbaInputs[i].addEventListener("change", function () {
-    blockEl.style.backgroundColor = `rgba(${rgbaR.value},${rgbaG.value},${rgbaB.value},${rgbaA.value})`;
+    blockEl.style.backgroundColor = `
+    rgba(
+    ${rgbaR.value},
+    ${rgbaG.value},
+    ${rgbaB.value},
+    ${rgbaA.value}
+    )`;
   });
 }
 
