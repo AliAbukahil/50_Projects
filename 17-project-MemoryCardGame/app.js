@@ -1,9 +1,14 @@
 const cards = document.querySelectorAll(".memory-card");
 
+// State management
 let cardIsFlipped = false;
+let lockBoard = false;
 let firstCard, secondCard;
 
 const flipCard = function () {
+  // if lockBoard is true
+  if (lockBoard) return;
+
   // the this keyword points to the exact point where the user is clicking
   // this.classList.toggle("flip");
   this.classList.add("flip");
@@ -13,13 +18,13 @@ const flipCard = function () {
     // First Click ––>> first Card
     cardIsFlipped = true;
     firstCard = this;
-  } else {
-    // First Click ––>> first Card
-    cardIsFlipped = false;
-    secondCard = this;
-
-    checkForMatch();
+    return;
   }
+  // First Click ––>> first Card
+  cardIsFlipped = false;
+  secondCard = this;
+
+  checkForMatch();
 };
 
 function checkForMatch() {
@@ -42,9 +47,12 @@ function disableCards() {
 }
 
 function unFlipCards() {
+  lockBoard = true;
+
   setTimeout(() => {
     firstCard.classList.remove("flip");
     secondCard.classList.remove("flip");
+    lockBoard = false;
   }, 1100);
 }
 
