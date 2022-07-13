@@ -9,11 +9,15 @@ const flipCard = function () {
 
   // not operator ! opposite of false
   if (!cardIsFlipped) {
+    // First Click ––>> first Card
     cardIsFlipped = true;
     firstCard = this;
   } else {
+    // First Click ––>> first Card
     cardIsFlipped = false;
     secondCard = this;
+
+    // checking whether the card matches
   }
 };
 
