@@ -18,6 +18,17 @@ const flipCard = function () {
     secondCard = this;
 
     // checking whether the card matches
+    if (firstCard.dataset.name === secondCard.dataset.name) {
+      // it is a match ––> disable the cards
+      firstCard.removeEventListener("click", flipCard);
+      secondCard.removeEventListener("click", flipCard);
+    } else {
+      // ––> not a match ––> unFlip the Cards
+      setTimeout(() => {
+        firstCard.classList.remove("flip");
+        secondCard.classList.remove("flip");
+      }, 1100);
+    }
   }
 };
 
