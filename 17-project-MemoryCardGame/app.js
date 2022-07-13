@@ -67,6 +67,17 @@ function resetBoard() {
   [firstCard, secondCard] = [null, null];
 }
 
+// IIFE ––> Immediately Invoked Function Expression => function is called
+// Immediately after its definition
+
+// Shuffling the Deck of functions
+(function shuffle() {
+  cards.forEach((card) => {
+    let randomPositions = Math.floor(Math.random() * 12);
+    card.style.order = randomPositions;
+  });
+})();
+
 cards.forEach(function (card) {
   card.addEventListener("click", flipCard);
 });
