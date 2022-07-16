@@ -69,7 +69,23 @@ function displayToDo(event) {
       });
       id++;
     }
-
-    input.value = "";
+    input.value = ""; // To empty the Add to do Field
   }
 }
+// ----------------------------------------------------------
+
+// Targeting the dynamically created to do items
+toDoList.addEventListener("click", (e) => {
+  const toDoItem = e.target;
+  const toDoStatus = toDoItem.attributes.status.value;
+
+  if (toDoStatus === "complete") {
+    completeToDo(toDoItem);
+  } else if (toDoStatus === "delete") {
+    removeToDo(toDoItem);
+  }
+});
+
+function completeToDo() {}
+
+function removeToDo() {}
