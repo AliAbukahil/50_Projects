@@ -76,6 +76,13 @@ function displayToDo(event) {
 
 // Targeting the dynamically created to do items
 toDoList.addEventListener("click", (e) => {
+  if (
+    e.path[0].localName === "p" ||
+    e.path[0].localName === "li" ||
+    e.path[0].localName === "ul"
+  )
+    return;
+
   const toDoItem = e.target;
   const toDoStatus = toDoItem.attributes.status.value;
 
