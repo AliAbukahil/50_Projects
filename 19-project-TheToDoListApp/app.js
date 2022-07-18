@@ -72,7 +72,26 @@ function displayToDo(event) {
     input.value = ""; // To empty the Add to do Field
   }
 }
+
 // ----------------------------------------------------------
+// When a to do is completed
+function completeToDo(toDoItem) {
+  toDoItem.classList.toggle(checkBtn);
+  toDoItem.classList.toggle(UncheckBtn);
+  toDoItem.parentNode.querySelector(".text").classList.toggle(textLineThrough);
+
+  toDoContainer[toDoItem.id].done = toDoContainer[toDoItem.id].done
+    ? false
+    : true;
+}
+
+// When to do is removed
+function removeToDo(toDoItem) {
+  toDoItem.parentNode.parentNode.removeChild(toDoItem.parentNode);
+  toDoContainer[toDoItem.id] = true;
+
+  console.log(toDoItem.parentNode); // li
+}
 
 // Targeting the dynamically created to do items
 toDoList.addEventListener("click", (e) => {
@@ -92,7 +111,3 @@ toDoList.addEventListener("click", (e) => {
     removeToDo(toDoItem);
   }
 });
-
-function completeToDo() {}
-
-function removeToDo() {}
