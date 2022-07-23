@@ -86,6 +86,7 @@ body {
 .choices {
   width: 100%;
   justify-content: space-evenly;
+  align-items: flex-end; /* V Axis || end of container */
 }
 
 .choice {
@@ -95,13 +96,12 @@ body {
   text-align: center;
   color: #343a40;
   font-size: 20px;
-  height: 150px;
-  width: 200px;
+  height: 125px;
+  width: 250px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom-left-radius: 25px;
-  border-top-right-radius: 25px;
+  border-radius: 75px 25px 75px 25px;
 }
 
 /* Answer Timer */
@@ -112,7 +112,7 @@ body {
 
 .counter {
   font-size: 40px;
-  color: rgb(27, 118, 141);
+  color: #1098ad;
 }
 
 .time-gauge-bg,
@@ -132,6 +132,7 @@ body {
 .time-gauge {
   height: 10px;
   background-color: #f03e3e;
+  border-radius: 35px;
 }
 
 /* Progress Container */

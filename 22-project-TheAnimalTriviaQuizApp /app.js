@@ -109,12 +109,23 @@ let questions = [
 
 // Necessary Variables
 const lastQuestion = questions.length - 1;
-let activeQuestion = 0;
-let count = 0;
 const questionTime = 10; // 10 seconds
 const gaugeWidth = 800; // 800px which is the width of the div
 const gaugeUnit = gaugeWidth / questionTime; //80px
+let activeQuestion = 0;
+let count = 0;
 let TIMER;
+
+// Start Button Event Listener
+start.addEventListener("click", startQuiz);
+
+// answer choices event listener
+allAnswerChoices.forEach(function (clickAnswer) {
+  clickAnswer.addEventListener("click", function (e) {
+    let userAnswer = e.target.innerText;
+    checkAnswer(userAnswer);
+  });
+});
 
 // renderQuestion
 function renderQuestion() {
@@ -129,15 +140,40 @@ function renderQuestion() {
   document.body.style.backgroundImage = bodyImg;
 }
 
-start.style.display = "none";
-renderQuestion();
-quiz.style.visibility = "visible";
-renderProgress();
+// startQuiz Function
+function startQuiz() {
+  start.style.display = "none";
+  renderQuestion();
+  quiz.style.visibility = "visible";
+  renderProgress();
+  renderCounter();
+  TIMER = setInterval(renderCounter, 1000);
+}
 
 // renderProgress Function
 function renderProgress() {
   for (let questionIndex = 0; questionIndex <= lastQuestion; questionIndex++) {
     progressContainer.innerHTML +=
       "<div class='progress-box' id=' + questionIndex + '></div>";
+  }
+}
+
+// renderCounter Function
+function renderCounter() {
+  if (count <= questionTime) {
+    counter.innerHTML = count;
+    timeGauge.style.width = count * gaugeUnit + "px";
+    count++;
+  } else {
+    count = 0;
+  }
+}
+
+// CheckAnswer Function
+function checkAnswer(answer) {
+  if (answer === questions.correctAnswer) {
+    console.log("Correct");
+  } else {
+    console.log("Try Again!");
   }
 }
