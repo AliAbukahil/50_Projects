@@ -111,6 +111,10 @@ let questions = [
 const lastQuestion = questions.length - 1;
 let activeQuestion = 0;
 let count = 0;
+const questionTime = 10; // 10 seconds
+const gaugeWidth = 800; // 800px which is the width of the div
+const gaugeUnit = gaugeWidth / questionTime; //80px
+let TIMER;
 
 // renderQuestion
 function renderQuestion() {
@@ -128,3 +132,12 @@ function renderQuestion() {
 start.style.display = "none";
 renderQuestion();
 quiz.style.visibility = "visible";
+renderProgress();
+
+// renderProgress Function
+function renderProgress() {
+  for (let questionIndex = 0; questionIndex <= lastQuestion; questionIndex++) {
+    progressContainer.innerHTML +=
+      "<div class='progress-box' id=' + questionIndex + '></div>";
+  }
+}

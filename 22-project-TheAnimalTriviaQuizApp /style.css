@@ -125,19 +125,19 @@ body {
 .time-gauge-bg {
   height: 10px;
   width: 800px;
-  background-color: lightgrey;
+  background-color: #ffe3e3;
   border-radius: 35px;
 }
 
 .time-gauge {
   height: 10px;
-  background-color: rgb(179, 6, 247);
+  background-color: #f03e3e;
 }
 
 /* Progress Container */
-.progress-bar {
-  height: 30px;
-  width: 30px;
+.progress-box {
+  height: 20px;
+  width: 20px;
   background-color: lightgrey;
   margin-left: 15px;
 }
