@@ -115,11 +115,12 @@ const gaugeUnit = gaugeWidth / questionTime; //80px
 let activeQuestion = 0;
 let count = 0;
 let TIMER;
+let score = 0;
 
 // Start Button Event Listener
 start.addEventListener("click", startQuiz);
 
-// answer choices event listener
+// Answer choices Event Listeners
 allAnswerChoices.forEach(function (clickAnswer) {
   clickAnswer.addEventListener("click", function (e) {
     let userAnswer = e.target.innerText;
@@ -169,11 +170,22 @@ function renderCounter() {
   }
 }
 
-// CheckAnswer Function
+// checkAnswer Function
 function checkAnswer(answer) {
-  if (answer === questions.correctAnswer) {
-    console.log("Correct");
+  if (answer === questions[activeQuestion].correctAnswer) {
+    score++;
+    answerIsCorrect();
   } else {
-    console.log("Try Again!");
+    answerIsIncorrect();
   }
+}
+
+// answerIsCorrect Function
+function answerIsCorrect() {
+  document.getElementById(activeQuestion).style.backgroundColor = "green";
+}
+
+// answerIsIncorrect Function
+function answerIsIncorrect() {
+  document.getElementById(activeQuestion).style.backgroundColor = "red";
 }
