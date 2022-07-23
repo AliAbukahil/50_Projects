@@ -107,7 +107,24 @@ let questions = [
   },
 ];
 
-questions.forEach(function (el) {
-  const ques = el.question;
-  console.log(ques);
-});
+// Necessary Variables
+const lastQuestion = questions.length - 1;
+let activeQuestion = 0;
+let count = 0;
+
+// renderQuestion
+function renderQuestion() {
+  let q = questions[activeQuestion];
+  question.innerHTML = `<p>${q.question}</p>`;
+  answerChoiceA.innerHTML = q.choiceA;
+  answerChoiceB.innerHTML = q.choiceB;
+  answerChoiceC.innerHTML = q.choiceC;
+  answerChoiceD.innerHTML = q.choiceD;
+
+  let bodyImg = `url('${q.questionImg}')`;
+  document.body.style.backgroundImage = bodyImg;
+}
+
+start.style.display = "none";
+renderQuestion();
+quiz.style.visibility = "visible";
