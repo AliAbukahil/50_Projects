@@ -155,7 +155,7 @@ function startQuiz() {
 function renderProgress() {
   for (let questionIndex = 0; questionIndex <= lastQuestion; questionIndex++) {
     progressContainer.innerHTML +=
-      "<div class='progress-box' id=' + questionIndex + '></div>";
+      "<div class='progress-box' id=" + questionIndex + "></div>";
   }
 }
 
@@ -166,7 +166,8 @@ function renderCounter() {
     timeGauge.style.width = count * gaugeUnit + "px";
     count++;
   } else {
-    count = 0;
+    answerIsIncorrect();
+    nextQuestion();
   }
 }
 
@@ -178,6 +179,7 @@ function checkAnswer(answer) {
   } else {
     answerIsIncorrect();
   }
+  nextQuestion();
 }
 
 // answerIsCorrect Function
@@ -188,4 +190,26 @@ function answerIsCorrect() {
 // answerIsIncorrect Function
 function answerIsIncorrect() {
   document.getElementById(activeQuestion).style.backgroundColor = "red";
+}
+
+// Next Question
+function nextQuestion() {
+  count = 0;
+  if (activeQuestion < lastQuestion) {
+    activeQuestion++;
+    renderQuestion();
+  } else {
+    clearInterval(TIMER);
+    renderScore();
+  }
+}
+
+// renderScore Function
+function renderScore() {
+  scoreContainer.style.visibility = "visible";
+
+  let scorePercentage = Math.round((100 * score) / questions.length);
+
+  scoreContainer.innerHTML = `<h2> Percentage of Correctly Answered Questions: ${scorePercentage} </h2>`;
+  scoreContainer.innerHTML += `<h2>Number of Correctly Answered Questions: ${score} </h2>`;
 }
