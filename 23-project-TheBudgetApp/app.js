@@ -25,7 +25,6 @@ const incomeAmount = document.querySelector("#income-amount-input");
 
 // Necessary Variables
 let Entry_LIST = [];
-console.log(Entry_LIST);
 let [balance, income, outcome] = [0, 0, 0]; // destructuring assignment
 let [deleteIcon, editIcon] = ["fas fa-trash", "far fa-edit"]; // destructuring assignment
 
@@ -57,7 +56,7 @@ allBtn.addEventListener("click", function () {
 addExpense.addEventListener("click", budgetOut);
 
 // // addIncome Event Listener
-//addIncome.addEventListener("click", budgetIn);
+addIncome.addEventListener("click", budgetIn);
 
 // addExpense / addIncome Enter key Event Listener
 document.addEventListener("keypress", function (e) {
@@ -75,12 +74,32 @@ function budgetOut(e) {
   let expense = {
     type: "expense",
     title: expenseTitle.value,
-    amount: parseInt(expenseAmount.value),
+    amount: parseInt(expenseAmount.value), // parseInt to convert a String to a number
   };
 
   Entry_LIST.push(expense);
-  console.log(expense);
-  console.log(typeof expense.amount);
+
+  updateUI();
+  clearInput([expenseTitle, expenseAmount]);
+}
+
+// budgetIn Function
+function budgetIn(e) {
+  e.preventDefault();
+  if (!incomeTitle.value || !incomeAmount.value) return;
+
+  let income = {
+    type: "income",
+    title: incomeAmount.value,
+    amount: parseFloat(incomeAmount.value), // parseFloat to convert a String to a number
+  };
+
+  Entry_LIST.push(income);
+  console.log(income);
+  console.log(typeof incomeAmount.value);
+
+  updateUI();
+  clearInput([incomeTitle, incomeAmount]);
 }
 
 // show Function
