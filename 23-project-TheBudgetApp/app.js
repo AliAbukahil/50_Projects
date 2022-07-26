@@ -104,9 +104,18 @@ function budgetIn(e) {
 function updateUI() {
   income = calculateTotal("income", Entry_LIST);
   outcome = calculateTotal("expense", Entry_LIST);
-  balance = calculateBalance(income, outcome);
+  balance = Math.abs(calculateBalance(income, outcome));
 
-  console.log([balance, income, outcome]);
+  let sign = income >= outcome ? "$" : "-$";
+
+  // Updating the UI
+  balanceEl.innerHTML = `<p>${sign}</p><p>${balance}</p>`;
+  incomeTotalEl.innerHTML = `<p>$</p><p>${income}</p>`;
+  outcomeTotalEl.innerHTML = `<p>$</p><p>${outcome}</p>`;
+
+  clearElement([expenseList, incomeList, allList]);
+
+  // Printing in the List ul
 }
 
 // ClearInput Function
