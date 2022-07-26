@@ -116,6 +116,30 @@ function updateUI() {
   clearElement([expenseList, incomeList, allList]);
 
   // Printing in the List ul
+  showEntry();
+}
+
+// clearElement Function
+function clearElement(elements) {
+  elements.forEach((element) => {
+    element.innerHTML = "";
+  });
+}
+
+// ShowEntry Function
+function showEntry(list, type, title, amount, id) {
+  const entry = `
+                    <li id="${id}" class=${type}>
+                      <div class="entry">${title}: $${amount}</div>
+                      <div class="action">
+                        <li class="far fa-edit"></li>
+                        <li class="fas fa-trash"></li>
+                    </div>
+                    </li>
+  `;
+
+  const position = "afterbegin";
+  list.insertAdjacentHTML(position, entry);
 }
 
 // ClearInput Function
