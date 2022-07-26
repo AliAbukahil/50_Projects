@@ -116,7 +116,15 @@ function updateUI() {
   clearElement([expenseList, incomeList, allList]);
 
   // Printing in the List ul
-  showEntry();
+  Entry_LIST.forEach((entry, index) => {
+    if (entry.type === "expense") {
+      showEntry(expenseList, entry.type, entry.title, entry.amount, index);
+    } else if (entry.type === "income") {
+      showEntry(incomeList, entry.type, entry.title, entry.amount, index);
+    }
+
+    showEntry(allList, entry.type, entry.title, entry.amount, index);
+  });
 }
 
 // clearElement Function
@@ -126,18 +134,15 @@ function clearElement(elements) {
   });
 }
 
-// ShowEntry Function
+// showEntry Function
 function showEntry(list, type, title, amount, id) {
-  const entry = `
-                    <li id="${id}" class=${type}>
-                      <div class="entry">${title}: $${amount}</div>
-                      <div class="action">
-                        <li class="far fa-edit"></li>
-                        <li class="fas fa-trash"></li>
+  const entry = `<li id="${id}" class="${type}">
+                    <div class="entry">${title}: $${amount}</div>
+                    <div class="action">
+                      <i class="far fa-edit"></i>
+                      <i class="fas fa-trash"></i>
                     </div>
-                    </li>
-  `;
-
+                 </li>`;
   const position = "afterbegin";
   list.insertAdjacentHTML(position, entry);
 }
