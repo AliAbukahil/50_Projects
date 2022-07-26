@@ -95,11 +95,41 @@ function budgetIn(e) {
   };
 
   Entry_LIST.push(income);
-  console.log(income);
-  console.log(typeof incomeAmount.value);
 
   updateUI();
   clearInput([incomeTitle, incomeAmount]);
+}
+
+// updateUI Function
+function updateUI() {
+  income = calculateTotal("income", Entry_LIST);
+  outcome = calculateTotal("expense", Entry_LIST);
+  balance = calculateBalance(income, outcome);
+
+  console.log([balance, income, outcome]);
+}
+
+// ClearInput Function
+function clearInput(inputs) {
+  inputs.forEach((input) => {
+    input.value = "";
+  });
+}
+
+// calculateTotal Function
+function calculateTotal(type, list) {
+  let sum = 0;
+  list.forEach((entry) => {
+    if (entry.type === type) {
+      sum += entry.amount;
+    }
+  });
+  return sum;
+}
+
+// calculateBalance Function
+function calculateBalance(income, outcome) {
+  return income - outcome;
 }
 
 // show Function
