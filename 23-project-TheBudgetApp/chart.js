@@ -26,4 +26,10 @@ function drawCircle(color, ratio, anticlockwise) {
 // drawCircle("red", 0.5, false);
 // drawCircle("green", 0.25, true);
 
-function updateChart() {}
+function updateChart(income, outcome) {
+  context2D.clearRect(0, 0, canvas.width, canvas.height);
+  let ratio = income / (income + outcome); // 0.75
+
+  drawCircle("lawngreen", -ratio, true);
+  drawCircle("tomato", 1 - ratio, false);
+}
