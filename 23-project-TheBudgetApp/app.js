@@ -61,8 +61,23 @@ allBtn.addEventListener("click", function () {
 // addExpanse Event Listener
 addExpense.addEventListener("click", budgetOut);
 
-// // addIncome Event Listener
+// addIncome Event Listener
 addIncome.addEventListener("click", budgetIn);
+
+// Lists Event Listener
+lists.forEach(function (list) {
+  list.addEventListener("click", function (e) {
+    // console.log(e.target.localName);
+    // console.log(e.target.attributes.class.value);
+    // console.log(e.target.parentNode.parentNode);
+
+    if (e.target.localName !== "i") return;
+    let targetBtn = e.target.attributes.class.value;
+    let entry = e.target.parentNode.parentNode;
+    let targetId = entry.attributes.id.value;
+    console.log(targetId);
+  });
+});
 
 // addExpense / addIncome Enter key Event Listener
 document.addEventListener("keypress", function (e) {
@@ -152,7 +167,7 @@ function showEntry(list, type, title, amount, id) {
                       <i class="far fa-edit"></i>
                       <i class="fas fa-trash"></i>
                     </div>
-                 </li>`;
+              </li>`;
   const position = "afterbegin";
   list.insertAdjacentHTML(position, entry);
 }
