@@ -24,9 +24,15 @@ const incomeTitle = document.querySelector("#income-title-input");
 const incomeAmount = document.querySelector("#income-amount-input");
 
 // Necessary Variables
-let Entry_LIST = [];
+//let Entry_LIST = [];
+let Entry_LIST;
 let [balance, income, outcome] = [0, 0, 0]; // destructuring assignment
 let [deleteIcon, editIcon] = ["fas fa-trash", "far fa-edit"]; // destructuring assignment
+
+// Whenever json.parse() is used, this means we're changing
+// json lang into javascript Object or value
+Entry_LIST = JSON.parse(localStorage.getItem("entry-list")) || [];
+updateUI();
 
 // expenseBtn Event listener
 expenseBtn.addEventListener("click", function () {
@@ -90,7 +96,7 @@ function budgetIn(e) {
 
   let income = {
     type: "income",
-    title: incomeAmount.value,
+    title: incomeTitle.value,
     amount: parseFloat(incomeAmount.value), // parseFloat to convert a String to a number
   };
 
@@ -127,6 +133,8 @@ function updateUI() {
   });
 
   updateChart(income, outcome);
+
+  localStorage.setItem("entry-list", JSON.stringify(Entry_LIST));
 }
 
 // clearElement Function
