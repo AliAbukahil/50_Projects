@@ -32,6 +32,7 @@ let [deleteIcon, editIcon] = ["fas fa-trash", "far fa-edit"]; // destructuring a
 // Whenever json.parse() is used, this means we're changing
 // json lang into javascript Object or value
 Entry_LIST = JSON.parse(localStorage.getItem("entry-list")) || [];
+console.log(Entry_LIST);
 updateUI();
 
 // expenseBtn Event listener
@@ -75,9 +76,41 @@ lists.forEach(function (list) {
     let targetBtn = e.target.attributes.class.value;
     let entry = e.target.parentNode.parentNode;
     let targetId = entry.attributes.id.value;
-    console.log(targetId);
+
+    if (targetBtn === editIcon) {
+      editEntry(targetId);
+    } else if (targetBtn === deleteIcon) {
+      deleteEntry(targetId);
+    }
   });
 });
+
+// editEntry Function
+function editEntry(targetId) {
+  // console.log(Entry_LIST[targetId]);
+  // console.log(Entry_LIST[targetId].amount);
+  // console.log(Entry_LIST[targetId].title);
+  // console.log(Entry_LIST[targetId].type);
+  let targetType = Entry_LIST[targetId].type;
+  let targetAmount = Entry_LIST[targetId].amount;
+  let targetTitle = Entry_LIST[targetId].title;
+
+  if (targetType === "income") {
+    incomeAmount.value = targetAmount;
+    incomeTitle.value = targetTitle;
+  } else if (targetType === "expense") {
+    expenseAmount.value = targetAmount;
+    expenseTitle.value = targetTitle;
+  }
+
+  deleteEntry(targetId);
+}
+
+// deleteEntry Function
+function deleteEntry(targetId) {
+  Entry_LIST.splice(targetId, 1);
+  updateUI();
+}
 
 // addExpense / addIncome Enter key Event Listener
 document.addEventListener("keypress", function (e) {
