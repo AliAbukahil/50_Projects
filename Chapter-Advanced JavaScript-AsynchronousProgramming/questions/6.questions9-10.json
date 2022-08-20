@@ -1,0 +1,16 @@
+[
+  {
+    "question": "What do wolves use their scent for?",
+    "choiceA": "Marking Territory",
+    "choiceB": "Finding Prey",
+    "choiceC": "A Cover-up",
+    "choiceD": "Nothing"
+  },
+  {
+    "question": "If a wolf trespasses on the territory of other wolves, what will happen?",
+    "choiceA": "Nothing",
+    "choiceB": "It will be accepted into the pack",
+    "choiceC": "It will be chased or killed",
+    "choiceD": "It will be required to present prey to the pack"
+  }
+]

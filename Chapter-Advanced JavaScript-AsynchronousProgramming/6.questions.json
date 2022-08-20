@@ -1,0 +1,72 @@
+[
+  {
+    "question": "How many different sounds can a cat make?",
+    "choiceA": "100",
+    "choiceB": "150",
+    "choiceC": "10",
+    "choiceD": "27"
+  },
+  {
+    "question": "What breed of cat has a reputation for being cross-eyed?",
+    "choiceA": "Himalayan",
+    "choiceB": "Egyptian Mau",
+    "choiceC": "Siamese",
+    "choiceD": "Persian"
+  },
+  {
+    "question": "What is the most common training command taught to dogs?",
+    "choiceA": "Stay",
+    "choiceB": "Sit",
+    "choiceC": "Dance",
+    "choiceD": "Roll"
+  },
+  {
+    "question": "What is a dog’s most highly developed sense?",
+    "choiceA": "Smell",
+    "choiceB": "Sight",
+    "choiceC": "Taste",
+    "choiceD": "Touch"
+  },
+  {
+    "question": " How many known species of birds are there?",
+    "choiceA": "5,000",
+    "choiceB": "10,000",
+    "choiceC": "20,000",
+    "choiceD": "40,000"
+  },
+  {
+    "question": "What evolutionary adaptation helps birds fly?",
+    "choiceA": "Rapid Digestion",
+    "choiceB": "Beaks",
+    "choiceC": "Hollow Bones",
+    "choiceD": "All of These"
+  },
+  {
+    "question": "Which of the following is not one of the four remaining subspecies of elk in North America?",
+    "choiceA": "Manitoba Elk",
+    "choiceB": "Highland Elk",
+    "choiceC": "Rocky Mountain Elk",
+    "choiceD": "Tule Elk"
+  },
+  {
+    "question": "What is a baby elk called?",
+    "choiceA": "Bull",
+    "choiceB": "Sow",
+    "choiceC": "Cow",
+    "choiceD": "Calf"
+  },
+  {
+    "question": "What do wolves use their scent for?",
+    "choiceA": "Marking Territory",
+    "choiceB": "Finding Prey",
+    "choiceC": "A Cover-up",
+    "choiceD": "Nothing"
+  },
+  {
+    "question": "If a wolf trespasses on the territory of other wolves, what will happen?",
+    "choiceA": "Nothing",
+    "choiceB": "It will be accepted into the pack",
+    "choiceC": "It will be chased or killed",
+    "choiceD": "It will be required to present prey to the pack"
+  }
+]
