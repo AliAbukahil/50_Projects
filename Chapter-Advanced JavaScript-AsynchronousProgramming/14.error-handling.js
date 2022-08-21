@@ -1,9 +1,8 @@
 // -----------------------------------------------------
 // Error handling -> Creating a custom error
 
-async function getQuestions() {
-  // const questionsResponse = await fetch("6.questions.json");
-  const questionsResponse = await fetch("6.123questions.json");
+async function getQuestion() {
+  const questionsResponse = await fetch("6.questions.json");
 
   if (questionsResponse.status !== 200) {
     throw new Error("Error Fetching Data");
@@ -12,6 +11,9 @@ async function getQuestions() {
   return (questionsData = await questionsResponse.json());
 }
 
-getQuestions()
-  .then((data) => console.log(data))
-  .catch((error) => console.log(error.message));
+getQuestion()
+  .then((Q) => console.log(Q))
+  .catch((error) => console.log(error));
+
+// let error = new Error();
+// console.log(error.__proto__.__proto__.__proto__);
