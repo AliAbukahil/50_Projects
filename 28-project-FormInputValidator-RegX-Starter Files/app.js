@@ -54,7 +54,7 @@ $ matches the end of the string or line
 const usernameInput = document.querySelector("#username");
 const passwordInput = document.querySelector("#password");
 
-// creating the regular expression
+// creating the regular expression for testing the password value
 const formValidator = /^(?=\D{8})(?=\D*\d{2})/;
 
 usernameInput.addEventListener("input", validate);
