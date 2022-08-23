@@ -35,7 +35,7 @@ section > div {
   justify-content: flex-start;
 }
 
-.strengthener {
+.strengther {
   height: 100%;
   width: 20px;
   background-color: white;
@@ -43,8 +43,8 @@ section > div {
   position: relative;
 }
 
-.strengthener::after {
-  /* --strength-amount: 50; */
+.strengther::after {
+  /* --strength-amount: 10; */
   content: "";
   position: absolute;
   bottom: 0;
