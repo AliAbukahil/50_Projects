@@ -11,6 +11,7 @@ class SuperheroEntry {
 
 // creating the superhero List Class
 class SuperheroList {
+  // Add Superhero
   addSuperhero(entry) {
     const listData = document.querySelector(".superhero-list-data");
     // CREATING AN HTML ELEMENT
@@ -23,10 +24,22 @@ class SuperheroList {
     <li>${entry.superheroPower}</li>
     <i class="fas fa-trash"></i>
     `;
+    listData.appendChild(listContainer);
+  }
+
+  // Clear Superhero Input Fields
+  clearSuperheroInputs() {
+    [
+      document.querySelector("#name").value,
+      document.querySelector("#universe").value,
+      document.querySelector("#power").value,
+    ] = ["", "", ""];
   }
 }
 
 // ***************** Events ***************
+
+// Form Submission Event Listener
 const form = document.querySelector(".superhero-form");
 form.addEventListener("submit", function (e) {
   e.preventDefault();
@@ -48,6 +61,17 @@ form.addEventListener("submit", function (e) {
   // Instantiating the SuperheroList class
   const list = new SuperheroList();
 
-  list.addSuperhero(entry);
+  // Validate the form if one or more of the input fields are empty
+  if (
+    superheroName === "" ||
+    superheroUniverse === "" ||
+    superheroPower === ""
+  ) {
+    list.validationError();
+  } else {
+    list.addSuperhero(entry);
+    list.clearSuperheroInputs();
+    list.validationSuccess();
+  }
   console.log(list);
 });
