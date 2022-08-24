@@ -97,3 +97,13 @@ form.addEventListener("submit", function (e) {
   }
   console.log(list);
 });
+
+// Deleting Listed Superheros
+const listData = document.querySelector(".superhero-list-data");
+listData.addEventListener("click", function (e) {
+  let className = e.target.className;
+  if (className === "fas fa-trash") {
+    const trash = e.target.parentNode;
+    trash.remove();
+  }
+});
