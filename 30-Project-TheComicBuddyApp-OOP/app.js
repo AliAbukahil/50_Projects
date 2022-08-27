@@ -1,6 +1,6 @@
 // OOP
 
-// creating the superhero Entry class
+// ------------------------creating the superhero Entry class
 class SuperheroEntry {
   constructor(superheroName, superheroUniverse, superheroPower) {
     this.superheroName = superheroName;
@@ -9,7 +9,7 @@ class SuperheroEntry {
   }
 }
 
-// creating the superhero List Class
+// ----------------------------creating the superhero List Class
 class SuperheroList {
   // Add Superhero Function
   addSuperhero(entry) {
@@ -59,7 +59,7 @@ class SuperheroList {
   }
 }
 
-// StoreSuperhero class
+// -----------------------------StoreSuperhero class
 class StoreSuperhero {
   // Get SuperHeros from local Storage
   static getSuperHero() {
@@ -72,6 +72,7 @@ class StoreSuperhero {
 
     return superheros;
   }
+
   // add SuperHeros to local Storage
   static addSuperhero(entry) {
     // the interconnection of the methods inside the static class StoreSuperhero
@@ -90,6 +91,20 @@ class StoreSuperhero {
       const list = new SuperheroList();
       list.addSuperhero(superhero);
     });
+  }
+
+  // Removing Superheros from the Local Storage
+  static removeSuperhero(clickSuperhero) {
+    const superheroList = StoreSuperhero.getSuperHero();
+
+    superheroList.forEach((superhero, index) => {
+      if (superhero.superheroName === clickSuperhero) {
+        /* The splice() method changes the contents of an array by removing or replacing existing elements and/or adding new elements in place */
+        superheroList.splice(index, 1);
+      }
+    });
+
+    localStorage.setItem("superheros", JSON.stringify(superheroList));
   }
 }
 
@@ -142,6 +157,17 @@ listData.addEventListener("click", function (e) {
   let className = e.target.className;
   if (className === "fas fa-trash") {
     const trash = e.target.parentNode;
+
+    // Deleting from local storage as well
+    const clickedSuperhero =
+      e.target.previousElementSibling.previousElementSibling
+        .previousElementSibling.textContent;
+
+    console.log(clickedSuperhero); // name of hero
+
+    // Deleting from local storage
+    StoreSuperhero.removeSuperhero(clickedSuperhero);
+
     trash.remove();
   }
 });
