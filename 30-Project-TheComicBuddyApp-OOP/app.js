@@ -80,9 +80,21 @@ class StoreSuperhero {
     superHerosList.push(entry);
     localStorage.setItem("superheros", JSON.stringify(superHerosList));
   }
+
+  // Display Superheros from local storage
+  static displaySuperhero() {
+    const superheroList = StoreSuperhero.getSuperHero();
+
+    superheroList.forEach((superhero) => {
+      // Instantiating the superhero Class
+      const list = new SuperheroList();
+      list.addSuperhero(superhero);
+    });
+  }
 }
 
 // ***************** Events ***************
+document.addEventListener("DOMContentLoaded", StoreSuperhero.displaySuperhero);
 
 // Form Submission Event Listener
 const form = document.querySelector(".superhero-form");
