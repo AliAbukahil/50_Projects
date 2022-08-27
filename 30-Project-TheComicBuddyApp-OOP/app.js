@@ -59,6 +59,29 @@ class SuperheroList {
   }
 }
 
+// StoreSuperhero class
+class StoreSuperhero {
+  // Get SuperHeros from local Storage
+  static getSuperHero() {
+    let superheros;
+    if (localStorage.getItem("superheros") === null) {
+      superheros = [];
+    } else {
+      superheros = JSON.parse(localStorage.getItem("superheros"));
+    }
+
+    return superheros;
+  }
+  // add SuperHeros to local Storage
+  static addSuperhero(entry) {
+    // the interconnection of the methods inside the static class StoreSuperhero
+    const superHerosList = StoreSuperhero.getSuperHero();
+
+    superHerosList.push(entry);
+    localStorage.setItem("superheros", JSON.stringify(superHerosList));
+  }
+}
+
 // ***************** Events ***************
 
 // Form Submission Event Listener
@@ -94,8 +117,11 @@ form.addEventListener("submit", function (e) {
     list.addSuperhero(entry);
     list.clearSuperheroInputs();
     list.validationSuccess();
+
+    // Adding Superhero to Local Storage
+    // That is how a static method is called
+    StoreSuperhero.addSuperhero(entry);
   }
-  console.log(list);
 });
 
 // Deleting Listed Superheros
