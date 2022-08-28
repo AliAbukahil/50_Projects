@@ -6,6 +6,7 @@ searchInput.addEventListener("keyup", displayMatches);
 
 const citiesStates = [];
 
+// Fetching Data from API
 async function getCities() {
   try {
     const res = await fetch(
@@ -24,6 +25,7 @@ async function getCities() {
 }
 getCities();
 
+// Filtering Data in Array
 function findMatches(citiesStates, wordToMatch) {
   return citiesStates.filter((cityState) => {
     const regX = new RegExp(wordToMatch, "gi"); // regX
@@ -32,8 +34,28 @@ function findMatches(citiesStates, wordToMatch) {
   });
 }
 
+// Displaying Data
 function displayMatches() {
-  findMatches(citiesStates);
+  const findArray = findMatches(citiesStates, this.value);
+
+  const matchElement = findArray
+    .map((place) => {
+      const regX = new RegExp(this.value, "gi");
+
+      const cityName = place.city.replace(
+        regX,
+        `<span class="highlight">${this.value}</span>`
+      );
+      const stateName = place.state.replace(
+        regX,
+        `<span class="highlight">${this.value}</span>`
+      );
+
+      return `<li class="name" >${cityName}, ${stateName}</li>`;
+    })
+    .join("");
+
+  suggestionsContainer.innerHTML = matchElement;
 }
 
 console.log(citiesStates);
