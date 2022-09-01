@@ -5,8 +5,8 @@ const getRateBtn = document.querySelector(".get-rate");
 
 getRateBtn.addEventListener("click", function (e) {
   e.preventDefault();
-  const fromCurrencyValue = fromCurrencyInput.value;
-  const toCurrencyValue = toCurrencyInput.value;
+  const fromCurrencyValue = fromCurrencyInput.value.toUpperCase();
+  const toCurrencyValue = toCurrencyInput.value.toUpperCase();
   const exchangeAmountValue = exchangeAmountInput.value;
 
   if (
@@ -54,4 +54,19 @@ async function convertCurrency(fromCurrency, toCurrency, exchangeAmount) {
   const convertedAmount = (exchangeAmount * amountExchangeRate).toFixed(2);
 
   return `${exchangeAmount} ${fromCurrency} ===> ${convertedAmount} ${toCurrency}`;
+}
+
+// **********************------**********************
+function inputError() {
+  document.querySelector(".input-error").classList.add("show");
+  setTimeout(() => {
+    document.querySelector(".input-error").classList.remove("show");
+  }, 2500);
+}
+
+function invalidCode() {
+  document.querySelector(".invalid-code").classList.add("show");
+  setTimeout(() => {
+    document.querySelector(".invalid-code").classList.remove("show");
+  }, 1500);
 }
