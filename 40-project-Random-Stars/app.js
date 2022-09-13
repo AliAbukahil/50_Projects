@@ -16,16 +16,17 @@ let horizontalVelocity = starsSpeed * randomSign() * Math.random();
 let verticalVelocity =
   Math.sqrt(Math.pow(starsSpeed, 2) - Math.pow(horizontalVelocity, 2)) *
   randomSign();
+// a = sqrt(c^2 - b^2)
 
-// randomizing the stars speed, size & Location
+// randomizing the stars speed, size & location
 for (let i = 0; i < starsNumber; i++) {
   let speedBoost = Math.random() * 2.5 + 0.5;
   stars[i] = {
     starRadius: (Math.random() * size * canvasEl.width) / 2,
     horizontalPosition: Math.floor(Math.random() * canvasEl.width),
-    verticalPosition: Math.floor(Math.random() * canvasEl.hight),
+    verticalPosition: Math.floor(Math.random() * canvasEl.height),
     horizontalVelocity: horizontalVelocity * speedBoost,
-    verticalVelocity: horizontalVelocity * speedBoost,
+    verticalVelocity: verticalVelocity * speedBoost,
   };
 }
 
@@ -42,7 +43,7 @@ function runStars(timeNow) {
   timeDiff = timeNow - timeLast;
   timeLast = timeNow;
 
-  // Drawing the Stars
+  // Drawing the stars
   canvasContext.fillStyle = starsColor;
   for (let i = 0; i < starsNumber; i++) {
     canvasContext.beginPath();
@@ -55,14 +56,36 @@ function runStars(timeNow) {
     );
     canvasContext.fill();
 
-    // update stars horizontal position
+    // Update stars horizontal position
     stars[i].horizontalPosition +=
       stars[i].horizontalVelocity * timeDiff * 0.001;
+
+    // reposition stars to the other side of the screen when they move off either side of the screen
+    if (stars[i].horizontalPosition < 0 - stars[i].starRadius) {
+      stars[i].horizontalPosition = canvasEl.width + stars[i].starRadius;
+    } else if (
+      stars[i].horizontalPosition >
+      canvasEl.width + stars[i].starRadius
+    ) {
+      stars[i].horizontalPosition = 0 - stars[i].starRadius;
+    }
+
+    // Update stars vertical position
+    stars[i].verticalPosition += stars[i].verticalVelocity * timeDiff * 0.001;
+
+    // reposition stars to top/bottom side of the screen when they move off either from the top or bottom
+    if (stars[i].verticalPosition < 0 - stars[i].starRadius) {
+      stars[i].verticalPosition = canvasEl.height + stars[i].starRadius;
+    } else if (
+      stars[i].verticalPosition >
+      canvasEl.height + stars[i].starRadius
+    ) {
+      stars[i].verticalPosition = 0 - stars[i].starRadius;
+    }
   }
+
   requestAnimationFrame(runStars);
 }
-
-// setInterval(runStars, 1000 / 60);
 
 // randomSign Function
 function randomSign() {
