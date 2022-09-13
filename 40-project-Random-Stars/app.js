@@ -37,9 +37,28 @@ let timeDiff,
 requestAnimationFrame(runStars);
 
 function runStars(timeNow) {
+  canvasContext.clearRect(0, 0, canvasEl.width, canvasEl.height);
   // calculate the frame difference
   timeDiff = timeNow - timeLast;
   timeLast = timeNow;
+
+  // Drawing the Stars
+  canvasContext.fillStyle = starsColor;
+  for (let i = 0; i < starsNumber; i++) {
+    canvasContext.beginPath();
+    canvasContext.arc(
+      stars[i].horizontalPosition,
+      stars[i].verticalPosition,
+      stars[i].starRadius,
+      0,
+      Math.PI * 2
+    );
+    canvasContext.fill();
+
+    // update stars horizontal position
+    stars[i].horizontalPosition +=
+      stars[i].horizontalVelocity * timeDiff * 0.001;
+  }
   requestAnimationFrame(runStars);
 }
 
