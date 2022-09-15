@@ -35,8 +35,20 @@ function collisionDetection() {
     yP = canvasEl.height - radius;
   }
 
+  // Right Boundary
+  if (xP >= canvasEl.width - radius) {
+    xP = canvasEl.width - radius;
+  }
+
   // Top Boundary
-  // if(yP + radius >)
+  if (yP <= radius) {
+    yP = radius;
+  }
+
+  // Left Boundary
+  if (xP <= radius) {
+    xP = radius;
+  }
 }
 
 // moving balls Function
