@@ -8,7 +8,7 @@ canvasEl.width = 800;
 let xP = 400;
 let yP = 300;
 let radius = 50;
-let speed = 10;
+let speed = 8;
 
 // Arrow Directions Event Listeners
 let upDir = false;
@@ -24,27 +24,46 @@ function runGame() {
   requestAnimationFrame(runGame);
   canvasContext.clearRect(0, 0, canvasEl.width, canvasEl.height);
   arrowInputs();
-
+  collisionDetection();
   drawBall();
+}
+
+// detecting the edges of the Canvas element // collision Detection
+function collisionDetection() {
+  // bottom boundary
+  if (yP >= canvasEl.height - radius) {
+    yP = canvasEl.height - radius;
+  }
+
+  // Top Boundary
+  // if(yP + radius >)
 }
 
 // moving balls Function
 function arrowInputs() {
   if (upDir) {
     yP = yP - speed;
-    canvasContext.clearRect();
+  }
+
+  if (downDir) {
+    yP = yP + speed;
+  }
+
+  if (leftDir) {
+    xP = xP - speed;
+  }
+
+  if (rightDir) {
+    xP = xP + speed;
   }
 }
 
 // Drawing the Ball
 function drawBall() {
   canvasContext.fillStyle = "white";
-
-  //canvasContext.strokeStyle = "white";
   canvasContext.beginPath();
   canvasContext.arc(xP, yP, radius, 0, Math.PI * 2);
   canvasContext.fill();
-  // canvasContext.stroke();
 }
 
 // Arrow Keys Function
