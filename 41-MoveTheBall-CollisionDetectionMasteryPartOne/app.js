@@ -10,19 +10,88 @@ let yP = 300;
 let radius = 50;
 let speed = 10;
 
+// Arrow Directions Event Listeners
+let upDir = false;
+let downDir = false;
+let leftDir = false;
+let rightDir = false;
+
+document.addEventListener("keydown", keyDown);
+document.addEventListener("keyup", keyUp);
+
 // Running the Game ––> the Game loop
 function runGame() {
   requestAnimationFrame(runGame);
+  canvasContext.clearRect(0, 0, canvasEl.width, canvasEl.height);
+  arrowInputs();
 
   drawBall();
+}
+
+// moving balls Function
+function arrowInputs() {
+  if (upDir) {
+    yP = yP - speed;
+    canvasContext.clearRect();
+  }
 }
 
 // Drawing the Ball
 function drawBall() {
   canvasContext.fillStyle = "white";
+
+  //canvasContext.strokeStyle = "white";
   canvasContext.beginPath();
   canvasContext.arc(xP, yP, radius, 0, Math.PI * 2);
   canvasContext.fill();
+  // canvasContext.stroke();
+}
+
+// Arrow Keys Function
+function keyDown(e) {
+  // keyCode 40 ArrowDown
+  // keyCode 38 ArrowUp
+  // keyCode 39 ArrowRight
+  // kexCode 37 ArrowLeft
+  // console.log(e);
+  if (e.keyCode === 38) {
+    upDir = true;
+  }
+
+  if (e.keyCode === 40) {
+    downDir = true;
+  }
+
+  if (e.keyCode === 37) {
+    leftDir = true;
+  }
+
+  if (e.keyCode === 39) {
+    rightDir = true;
+  }
+}
+
+function keyUp(e) {
+  // keyCode 40 ArrowDown
+  // keyCode 38 ArrowUp
+  // keyCode 39 ArrowRight
+  // kexCode 37 ArrowLeft
+  // console.log(e);
+  if (e.keyCode === 38) {
+    upDir = false;
+  }
+
+  if (e.keyCode === 40) {
+    downDir = false;
+  }
+
+  if (e.keyCode === 37) {
+    leftDir = false;
+  }
+
+  if (e.keyCode === 39) {
+    rightDir = false;
+  }
 }
 
 runGame();
