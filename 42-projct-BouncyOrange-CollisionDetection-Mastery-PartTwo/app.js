@@ -9,8 +9,8 @@ let xV, yV; // x and y Axis Velocity
 xP = canvasEl.width / 2;
 yP = canvasEl.height / 2;
 
-xV = Math.floor(Math.random() * 201 + 99) / FPS;
-yV = Math.floor(Math.random() * 201 + 99) / FPS;
+xV = Math.floor(Math.random() * 501 + 99) / FPS; // 501 faster or slower
+yV = Math.floor(Math.random() * 501 + 99) / FPS;
 
 // coin toss situation
 if (Math.floor(Math.random() * 2) === 0) {
