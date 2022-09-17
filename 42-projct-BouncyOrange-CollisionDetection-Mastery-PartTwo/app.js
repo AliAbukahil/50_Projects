@@ -30,6 +30,27 @@ function runGame() {
   // clearing the canvas
   canvasContext.clearRect(0, 0, canvasEl.width, canvasEl.height);
 
+  // detecting the edges of the Canvas element // collision Detection
+  // Bottom Boundary
+  if (yV > 0 && yP >= canvasEl.height - radius) {
+    yV = -yV;
+  }
+
+  // right boundary
+  if (xV > 0 && xP > canvasEl.width - radius) {
+    xV = -xV;
+  }
+
+  // top boundary
+  if (yV < 0 && yP <= radius) {
+    yV = -yV;
+  }
+
+  // left boundary
+  if (xV < 0 && xP <= radius) {
+    xV = -xV;
+  }
+
   // Drawing the ball
   canvasContext.beginPath();
   canvasContext.fillStyle = "orangered";
