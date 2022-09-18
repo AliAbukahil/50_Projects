@@ -70,7 +70,7 @@ class RunBalls {
     this.drawBalls();
   }
 }
-
+//
 // balls Array
 let ballsArray = [];
 for (let i = 0; i < 1000; i++) {
