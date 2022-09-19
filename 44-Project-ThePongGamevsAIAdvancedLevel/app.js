@@ -54,8 +54,6 @@ const net = {
   color: "white",
 };
 
-/* #f76707 */
-
 // Drawing the canvas
 function drawRect(xP, yP, width, height, color) {
   canvasContext.fillStyle = color;
@@ -79,7 +77,60 @@ function drawText(content, xP, yP, color) {
 
 // drawing the net
 function drawNet() {
-  for (let i = 0; i > canvasEl.height; i += 15) {
+  for (let i = 0; i < canvasEl.height; i += 15) {
     drawRect(net.xP, net.yP + i, net.width, net.height, net.color);
   }
 }
+
+// runGame Function AKA The Game Loop
+function runGame() {
+  // clearing the canvas
+  drawRect(0, 0, canvasEl.width, canvasEl.height, "#f76707");
+
+  // Draw net Function
+  drawNet();
+
+  // Draw Score Function
+  drawText(
+    playerPaddleRI.score,
+    (1 * canvasEl.width) / 4,
+    (1 * canvasEl.height) / 10,
+    "white"
+  );
+
+  drawText(
+    playerPaddleRI.score,
+    (3 * canvasEl.width) / 4,
+    (1 * canvasEl.height) / 10,
+    "white"
+  );
+
+  // drawing the paddles for RI and AI
+  drawRect(
+    playerPaddleRI.xP,
+    playerPaddleRI.yP,
+    playerPaddleRI.width,
+    playerPaddleRI.height,
+    playerPaddleRI.color
+  );
+
+  drawRect(
+    playerPaddleAI.xP,
+    playerPaddleAI.yP,
+    playerPaddleAI.width,
+    playerPaddleAI.height,
+    playerPaddleAI.color
+  );
+
+  // drawing the ball
+  drawCircle(ball.xP, ball.yP, ball.radius, ball.color);
+}
+
+// The Game Initialization function
+function gameInt() {
+  runGame();
+}
+
+// Looping the game to keep it Running
+const FPS = 60;
+setInterval(gameInt, 1000 / FPS);
