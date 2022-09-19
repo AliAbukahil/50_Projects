@@ -71,7 +71,7 @@ function drawCircle(xP, yP, radius, color) {
 // Drawing the Text
 function drawText(content, xP, yP, color) {
   canvasContext.fillStyle = color;
-  canvasContext.font = "35px sans-serif";
+  canvasContext.font = "50px sans-serif";
   canvasContext.fillText(content, xP, yP);
 }
 
@@ -126,8 +126,42 @@ function runGame() {
   drawCircle(ball.xP, ball.yP, ball.radius, ball.color);
 }
 
+// The Collision Detection of paddles Function
+function paddleColliDete(BALL, PADDLE) {
+  ball.top = BALL.yP - BALL.radius;
+  ball.bottom = BALL.yP + BALL.radius;
+  ball.left = BALL.xP - BALL.radius;
+  ball.right = BALL.xP + BALL.radius;
+
+  PADDLE.top = PADDLE.yP;
+  PADDLE.bottom = PADDLE.yP + PADDLE.height;
+  PADDLE.left = PADDLE.xP;
+  PADDLE.right = PADDLE.xP + PADDLE.width;
+
+  return (
+    BALL.right > PADDLE.left &&
+    BALL.bottom > PADDLE.top &&
+    BALL.left < PADDLE.right &&
+    BALL.top < PADDLE.bottom
+  );
+}
+
+// The everything Manager Function
+function everythingManager() {
+  // Moving the ball by the amount of acceleration
+  ball.xP += ball.xV; // moving the Ball
+  ball.yP += ball.yV; // moving the ball
+
+  // bouncing of the Top Bottom Walls
+  if (ball.yP + ball.radius > canvasEl.height || ball.yP - ball.radius < 0) {
+    ball.yV = -ball.yV;
+    wall.play();
+  }
+}
+
 // The Game Initialization function
 function gameInt() {
+  everythingManager();
   runGame();
 }
 
