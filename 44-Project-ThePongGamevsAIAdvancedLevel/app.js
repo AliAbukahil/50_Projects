@@ -20,7 +20,7 @@ const playerPaddleRI = {
   yP: canvasEl.height / 2 - 100 / 2,
   height: 100,
   width: 10,
-  color: "#94d82d",
+  color: "#fab005",
   score: 0,
 };
 
@@ -30,11 +30,11 @@ const playerPaddleAI = {
   yP: canvasEl.height / 2 - 100 / 2,
   height: 100,
   width: 10,
-  color: "#66d9e8",
+  color: "#d9480f",
   score: 0,
 };
 
-// Creating the ball
+// Creating the Ball
 const ball = {
   xP: canvasEl.width / 2,
   yP: canvasEl.height / 2,
@@ -42,10 +42,10 @@ const ball = {
   speed: 7,
   xV: 5,
   yV: 5,
-  color: "#343a40",
+  color: "#495057",
 };
 
-// Creating the Net
+// Creating the new
 const net = {
   xP: canvasEl.width / 2 - 1,
   yP: 0,
@@ -60,7 +60,7 @@ function drawRect(xP, yP, width, height, color) {
   canvasContext.fillRect(xP, yP, width, height);
 }
 
-// Drawing a circle // ball
+// Drawing a circle
 function drawCircle(xP, yP, radius, color) {
   canvasContext.fillStyle = color;
   canvasContext.beginPath();
@@ -68,14 +68,14 @@ function drawCircle(xP, yP, radius, color) {
   canvasContext.fill();
 }
 
-// Drawing the Text
+// Drawing the text
 function drawText(content, xP, yP, color) {
   canvasContext.fillStyle = color;
-  canvasContext.font = "50px sans-serif";
+  canvasContext.font = "35px sans-serif";
   canvasContext.fillText(content, xP, yP);
 }
 
-// drawing the net
+// Drawing the net
 function drawNet() {
   for (let i = 0; i < canvasEl.height; i += 15) {
     drawRect(net.xP, net.yP + i, net.width, net.height, net.color);
@@ -85,21 +85,20 @@ function drawNet() {
 // runGame Function AKA The Game Loop
 function runGame() {
   // clearing the canvas
-  drawRect(0, 0, canvasEl.width, canvasEl.height, "#cc5de8");
+  drawRect(0, 0, canvasEl.width, canvasEl.height, "#66a80f");
 
-  // Draw net Function
+  // Draw net function
   drawNet();
 
-  // Draw Score Function
+  // draw score function
   drawText(
     playerPaddleRI.score,
     (1 * canvasEl.width) / 4,
     (1 * canvasEl.height) / 10,
     "white"
   );
-
   drawText(
-    playerPaddleRI.score,
+    playerPaddleAI.score,
     (3 * canvasEl.width) / 4,
     (1 * canvasEl.height) / 10,
     "white"
@@ -133,12 +132,12 @@ function movePaddle(e) {
   playerPaddleRI.yP = e.clientY - canvasRect.top - playerPaddleRI.height / 2;
 }
 
-// The Collision Detection of paddles Function
+// The Collision Detection of Paddles Function
 function paddleColliDete(BALL, PADDLE) {
-  ball.top = BALL.yP - BALL.radius;
-  ball.bottom = BALL.yP + BALL.radius;
-  ball.left = BALL.xP - BALL.radius;
-  ball.right = BALL.xP + BALL.radius;
+  BALL.top = BALL.yP - BALL.radius;
+  BALL.bottom = BALL.yP + BALL.radius;
+  BALL.left = BALL.xP - BALL.radius;
+  BALL.right = BALL.xP + BALL.radius;
 
   PADDLE.top = PADDLE.yP;
   PADDLE.bottom = PADDLE.yP + PADDLE.height;
@@ -153,7 +152,7 @@ function paddleColliDete(BALL, PADDLE) {
   );
 }
 
-// the restBall Function
+// the resetBall function
 function resetBall() {
   ball.xP = canvasEl.width / 2;
   ball.yP = canvasEl.height / 2;
@@ -163,55 +162,59 @@ function resetBall() {
 
 // The everything Manager Function
 function everythingManager() {
-  // Moving the ball by the amount of acceleration
-  ball.xP += ball.xV; // moving the Ball
-  ball.yP += ball.yV; // moving the ball
+  // moving the ball by the amount of acceleration
+  ball.xP += ball.xV;
+  ball.yP += ball.yV;
 
-  // Creating the AI
+  // creating the AI
   let intelligenceLevel = 0.1;
   playerPaddleAI.yP +=
     (ball.yP - (playerPaddleAI.yP + playerPaddleAI.height / 2)) *
     intelligenceLevel;
 
-  // bouncing of the Top Bottom Walls
+  // bouncing off the top and bottom walls
   if (ball.yP + ball.radius > canvasEl.height || ball.yP - ball.radius < 0) {
     ball.yV = -ball.yV;
     wall.play();
   }
 
-  let player = ball.xP < canvasEl.width / 2 ? playerPaddleRI : playerPaddleAI;
+  let player =
+    ball.xP + ball.radius < canvasEl.width / 2
+      ? playerPaddleRI
+      : playerPaddleAI;
 
   if (paddleColliDete(ball, player)) {
     hit.play();
 
-    // When the ball hits the Paddle of any player
-    let CollisionPoint = ball.yP - (player.yP + player.height / 2);
+    // when the ball hits the paddle of any player
+    let collisionPoint = ball.yP - (player.yP + player.height / 2);
 
-    // normalization ==> converting -50 & 50 ==> -1 & 1
-    CollisionPoint = CollisionPoint / (player.height / 2);
+    // normalization -> converting -50 & 50 -> -1 & 1 & 0
+    collisionPoint = collisionPoint / (player.height / 2);
 
-    // Bouncing angle
-    let bounceAngle = (CollisionPoint * Math.PI) / 4;
+    // calculating the angle at which the bounces back (radians)
+    let bounceAngle = (collisionPoint * Math.PI) / 4;
 
-    // Calculating the directions of the ball when it bounces back
-    let direction = ball.xP < canvasEl.width / 2 ? 1 : -1;
+    // calculating the direction of the ball when it bounces back
+    let direction = ball.xP + ball.radius < canvasEl.width / 2 ? 1 : -1;
 
-    // Updating the velocity when the ball hits any paddle
+    // updating the velocity when the ball hits any paddle
+    //https://www.mathsisfun.com/sine-cosine-tangent.html
     ball.xV = direction * ball.speed * Math.cos(bounceAngle);
-    ball.yV = direction * ball.speed * Math.sin(bounceAngle);
+    ball.yV = ball.speed * Math.sin(bounceAngle);
 
-    // after each bonce back, the speed of the ball should be increased
+    // after each bounce back, the speed of the ball should be increased
     ball.speed += 0.1;
   }
 
-  // updating the score
+  // updating the scores
   if (ball.xP + ball.radius < 0) {
-    // The AI scored
+    // the AI scored
     playerPaddleAI.score++;
     AIScore.play();
     resetBall();
   } else if (ball.xP - ball.radius > canvasEl.width) {
-    // thr RI scored
+    // the RI scored
     playerPaddleRI.score++;
     RIScore.play();
     resetBall();
@@ -219,11 +222,10 @@ function everythingManager() {
 }
 
 // The Game Initialization function
-function gameInt() {
+function gameInit() {
   everythingManager();
   runGame();
 }
-
-// Looping the game to keep it Running
+// Looping the game to keep it running
 const FPS = 60;
-setInterval(gameInt, 1000 / FPS);
+setInterval(gameInit, 1000 / FPS);
