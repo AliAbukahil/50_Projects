@@ -126,6 +126,13 @@ function runGame() {
   drawCircle(ball.xP, ball.yP, ball.radius, ball.color);
 }
 
+// The player Paddle RI Event Listener
+canvasEl.addEventListener("mousemove", movePaddle);
+function movePaddle(e) {
+  let canvasRect = canvasEl.getBoundingClientRect();
+  playerPaddleRI.yP = e.clientY - canvasRect.top - playerPaddleRI.height / 2;
+}
+
 // The Collision Detection of paddles Function
 function paddleColliDete(BALL, PADDLE) {
   ball.top = BALL.yP - BALL.radius;
@@ -152,10 +159,41 @@ function everythingManager() {
   ball.xP += ball.xV; // moving the Ball
   ball.yP += ball.yV; // moving the ball
 
+  // Creating the AI
+  let intelligenceLevel = 0.1;
+  playerPaddleAI.yP +=
+    (ball.yP - (playerPaddleAI.yP + playerPaddleAI.height / 2)) *
+    intelligenceLevel;
+
   // bouncing of the Top Bottom Walls
   if (ball.yP + ball.radius > canvasEl.height || ball.yP - ball.radius < 0) {
     ball.yV = -ball.yV;
     wall.play();
+  }
+
+  let player = ball.xP < canvasEl.width / 2 ? playerPaddleRI : playerPaddleAI;
+
+  if (paddleColliDete(ball, player)) {
+    hit.play();
+
+    // When the ball hits the Paddle of any player
+    let CollisionPoint = ball.yP - (player.yP + player.height / 2);
+
+    // normalization ==> converting -50 & 50 ==> -1 & 1
+    CollisionPoint = CollisionPoint / (player.height / 2);
+
+    // Bouncing angle
+    let bounceAngle = (CollisionPoint * Math.PI) / 4;
+
+    // Calculating the directions of the ball when it bounces back
+    let direction = ball.xP < canvasEl.width / 2 ? 1 : -1;
+
+    // Updating the velocity when the ball hits any paddle
+    ball.xV = direction * ball.speed * Math.cos(bounceAngle);
+    ball.yV = direction * ball.speed * Math.sin(bounceAngle);
+
+    // after each bonce back, the speed of the ball should be increased
+    ball.speed += 0.1;
   }
 }
 
