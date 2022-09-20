@@ -20,7 +20,7 @@ const playerPaddleRI = {
   yP: canvasEl.height / 2 - 100 / 2,
   height: 100,
   width: 10,
-  color: "#82c91e",
+  color: "#94d82d",
   score: 0,
 };
 
@@ -30,7 +30,7 @@ const playerPaddleAI = {
   yP: canvasEl.height / 2 - 100 / 2,
   height: 100,
   width: 10,
-  color: "#228be6",
+  color: "#66d9e8",
   score: 0,
 };
 
@@ -85,7 +85,7 @@ function drawNet() {
 // runGame Function AKA The Game Loop
 function runGame() {
   // clearing the canvas
-  drawRect(0, 0, canvasEl.width, canvasEl.height, "#f76707");
+  drawRect(0, 0, canvasEl.width, canvasEl.height, "#cc5de8");
 
   // Draw net Function
   drawNet();
@@ -153,6 +153,14 @@ function paddleColliDete(BALL, PADDLE) {
   );
 }
 
+// the restBall Function
+function resetBall() {
+  ball.xP = canvasEl.width / 2;
+  ball.yP = canvasEl.height / 2;
+
+  ball.speed = 7;
+}
+
 // The everything Manager Function
 function everythingManager() {
   // Moving the ball by the amount of acceleration
@@ -194,6 +202,19 @@ function everythingManager() {
 
     // after each bonce back, the speed of the ball should be increased
     ball.speed += 0.1;
+  }
+
+  // updating the score
+  if (ball.xP + ball.radius < 0) {
+    // The AI scored
+    playerPaddleAI.score++;
+    AIScore.play();
+    resetBall();
+  } else if (ball.xP - ball.radius > canvasEl.width) {
+    // thr RI scored
+    playerPaddleRI.score++;
+    RIScore.play();
+    resetBall();
   }
 }
 
