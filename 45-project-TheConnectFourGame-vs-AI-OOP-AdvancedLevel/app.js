@@ -34,6 +34,11 @@ class Cell {
     this.owner = null;
   }
 
+  // contains function
+  contains(x, y) {
+    return x > this.left && x < this.right && y > this.top && y < this.bottom;
+  }
+
   // the draw circle function
   draw(canvasContext) {
     // owner color
@@ -69,6 +74,7 @@ let gameOver,
   timeAI;
 
 // Event window resize listener
+canvasEl.addEventListener("click", click);
 canvasEl.addEventListener("mousemove", highlightGrid);
 window.addEventListener("resize", setDimensions);
 
@@ -97,9 +103,71 @@ function playGame(timeNow) {
   requestAnimationFrame(playGame);
 }
 
+// checkWin function
+function checkWin(row, col) {
+  return false;
+}
+
+// HighlightCell Function
+function highlightCell(x, y) {
+  let col = null; // identify the chosen col
+  for (let cell of row) {
+    // clear the exiting highlighting
+    cell.highlight = null;
+
+    // get col
+    if (cell.contains(x, y)) {
+      col = cell.col;
+    }
+  }
+
+  // if no col is still chosen
+  if (col == null) {
+    return;
+  }
+
+  // highlight the first unoccupied cell
+  for (let i = GRID_ROWS - 1; i >= 0; i--) {
+    if (grid[i][col].owner == null) {
+      grid[i][col].highlight = playersTurn;
+      return grid[i][col];
+    }
+  }
+
+  return null;
+}
+
+// highlighted grid function
+function highlightGrid(e) {
+  if (!playersTurn || gameOver) {
+    return;
+  }
+
+  highlightCell(e.clientX, e.clientY);
+}
+
 // newGame Function
 function newGame() {
+  // con toss
+  playersTurn = Math.random() < 0.5;
+  gameOver = false;
+  gameTied = false;
   createGrid();
+}
+
+// click function
+function click() {
+  if (gameOver) {
+    newGame();
+    return;
+  }
+
+  // If it is the player's turn
+  if (!playersTurn) {
+    return;
+  }
+
+  selectCell();
 }
 
 // Create Grid function
@@ -141,9 +209,9 @@ function drawBackground() {
   canvasContext.fillRect(0, 0, width, height);
 }
 
-// Draw grid function
+// drawGrid Function
 function drawGrid() {
-  // frame& Bottom
+  // frame & bottom
   let cell = grid[0][0];
   let frameHeight = cell.h * GRID_ROWS;
   let frameWidth = cell.w * GRID_COLS;
@@ -164,6 +232,34 @@ function drawGrid() {
     for (let cell of row) {
       cell.draw(canvasContext);
     }
+  }
+}
+
+// selectCell Function
+function selectCell() {
+  let highlight = false;
+  OUTER: for (let row of grid) {
+    for (let cell of grid) {
+      if (cell.highlight != null) {
+        highlighting = true;
+        cell.highlight = null;
+        cell.owner = playersTurn;
+        if (checkWin(cell.row, cell.col)) {
+          gameOver = true;
+        }
+        break OUTER;
+      }
+    }
+  }
+
+  // don not allow selection if there is no highlighting
+  if (!highlighting) {
+    return;
+  }
+
+  // switch the player if there is no game over
+  if (!gameOver) {
+    playersTurn = !playersTurn;
   }
 }
 
