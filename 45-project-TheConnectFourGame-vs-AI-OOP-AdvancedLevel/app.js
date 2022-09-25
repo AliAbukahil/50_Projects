@@ -42,6 +42,7 @@ class Cell {
     this.r = (w * GRID_CIRCLE) / 2; // r = radius
     this.highlight = null;
     this.owner = null;
+    this.winner = false;
   }
 
   // contains function
@@ -62,9 +63,9 @@ class Cell {
     canvasContext.fill();
 
     // draw highlighting
-    if (this.highlight != null) {
+    if (this.winner || this.highlight != null) {
       // color
-      color = this.highlight ? COLOR_RI : COLOR_AI;
+      color = this.winner ? COLOR_WIN : this.highlight ? COLOR_RI : COLOR_AI;
 
       // Draw a circle around the perimeter
       canvasContext.lineWidth = this.r / 4;
@@ -116,7 +117,80 @@ function playGame(timeNow) {
 
 // checkWin function
 function checkWin(row, col) {
-  return true;
+  // return true;
+  // Getting all the cells from each direction
+  let diagonalLeft = [],
+    diagonalRight = [],
+    horizontal = [],
+    vertical = [];
+
+  for (let i = 0; i < GRID_ROWS; i++) {
+    for (let j = 0; j < GRID_COLS; i++) {
+      // horizontal cells
+      if (i == row) {
+        horizontal.push(grid[i][j]);
+      }
+
+      // vertical cells
+      if (j == col) {
+        vertical.push(grid[i][j]);
+      }
+
+      // diagonal left
+      if (i - j == row - col) {
+        diagonalLeft.push(grid[i][j]);
+      }
+
+      // diagonal right
+      if (i + j == row + col) {
+        diagonalRight.push(grid[i][j]);
+      }
+    }
+  }
+
+  // if any have four in a row, return a win
+  return (
+    connect4(diagonalLeft) ||
+    connect4(diagonalRight) ||
+    connect4(horizontal) ||
+    connect4(vertical)
+  );
+}
+
+// the connect4 Function
+function connect4(cells = []) {
+  let count = 0,
+    lastOwner = null;
+
+  let winningCells = [];
+  for (let i = 0; i < winningCells.length; i++) {
+    if (cells[i].owner == null) {
+      count = winningCells = [];
+    }
+    //same owner, add to the count
+    else if (cells[i].owner == lastOwner) {
+      count++;
+      winningCells.push(cells[i]);
+    }
+
+    // new owner, new count
+    else {
+      count = 1;
+      winningCells = [];
+      winningCells.push(cells[i]);
+    }
+
+    // set the lastOwner
+    lastOwner = cells[i].owner;
+
+    if (count == 4) {
+      for (let cell of winningCells) {
+        cell.winner = true;
+      }
+      return true;
+    }
+  }
+  return false;
 }
 
 // HighlightCell Function
@@ -305,6 +379,22 @@ function selectCell() {
   // don not allow selection if there is no highlighting
   if (!highlighting) {
     return;
+  }
+
+  // Check for a tied Game
+  if (!gameOver) {
+    gameTied = true;
+    OUTER: for (let row of grid) {
+      for (let cell of row) {
+        if (cell.owner == null) {
+          gameTied = false;
+          break OUTER;
+        }
+      }
+    }
+    if (gameTied) {
+      gameOver = true;
+    }
   }
 
   // switch the player if there is no game over
