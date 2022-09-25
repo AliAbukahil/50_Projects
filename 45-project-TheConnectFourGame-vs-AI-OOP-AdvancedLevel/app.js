@@ -16,6 +16,16 @@ const COLOR_AI_DARK = "darkgreen";
 const COLOR_RI = "orange";
 const COLOR_RI_DARK = " darkgoldenrod";
 
+const COLOR_TIE = "darkgrey";
+const COLOR_TIE_DARK = "black";
+const COLOR_WIN = "blue";
+
+// text
+const TEXT_AI = "Computer";
+const TEXT_RI = "Human";
+const TEXT_TIE = "Draw";
+const TEXT_WIN = "Won";
+
 // The Cell Class
 class Cell {
   constructor(left, top, w, h, row, col) {
@@ -98,6 +108,7 @@ function playGame(timeNow) {
   // draw functions
   drawBackground();
   drawGrid();
+  drawText();
 
   // calling the next frame
   requestAnimationFrame(playGame);
@@ -105,7 +116,7 @@ function playGame(timeNow) {
 
 // checkWin function
 function checkWin(row, col) {
-  return false;
+  return true;
 }
 
 // HighlightCell Function
@@ -232,6 +243,45 @@ function drawGrid() {
     for (let cell of row) {
       cell.draw(canvasContext);
     }
+  }
+}
+
+// drawText Function
+function drawText() {
+  if (!gameOver) {
+    return;
+  }
+
+  // set up next parameters
+  let size = grid[0][0].h;
+  canvasContext.fillStyle = gameTied
+    ? COLOR_TIE
+    : playersTurn
+    ? COLOR_RI
+    : COLOR_AI;
+
+  canvasContext.font = size + "px sans-serif";
+  canvasContext.lineJoin = "round";
+  canvasContext.lineWidth = size / 10;
+  canvasContext.strokeStyle = gameTied
+    ? COLOR_TIE_DARK
+    : playersTurn
+    ? COLOR_AI_DARK
+    : COLOR_AI_DARK;
+  canvasContext.textAlign = "center";
+  canvasContext.textBaseline = "middle";
+
+  // drawing the TExt
+  let offset = size * 0.6;
+  let text = gameTied ? TEXT_TIE : playersTurn ? TEXT_RI : TEXT_AI;
+  if (gameTied) {
+    canvasContext.strokeText(text, width / 2, height / 2);
+    canvasContext.fillText(text, width / 2, height / 2);
+  } else {
+    canvasContext.strokeText(text, width / 2, height / 2 - offset);
+    canvasContext.fillText(text, width / 2, height / 2 - offset);
+    canvasContext.strokeText(TEXT_WIN, width / 2, height / 2 + offset);
+    canvasContext.fillText(TEXT_WIN, width / 2, height / 2 + offset);
   }
 }
 
