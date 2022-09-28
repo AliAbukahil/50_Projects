@@ -26,19 +26,55 @@ const ConX = canvasEl.getContext("2d");
 // DIMENSIONS
 let width, height, wall;
 
+// initializing the paddle, ball classes
+let paddle, ball, touchX; // touch location
+
 // *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* Resize Window Event *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
 window.addEventListener("resize", setDimensions);
 
 // *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* The Game Loop *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
 function playGame() {
   requestAnimationFrame(playGame);
+
   drawBackground();
+  drawWalls();
+  drawPaddle();
 }
 
-// *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* Draw Background Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
+// *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* DrawBackground Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
 function drawBackground() {
   ConX.fillStyle = COLOR_BG;
   ConX.fillRect(0, 0, canvasEl.width, canvasEl.height);
+}
+
+// *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* DrawPaddle Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
+function drawPaddle() {
+  ConX.fillStyle = COLOR_PADDLE;
+  ConX.fillRect(
+    paddle.x - paddle.w * 0.5,
+    paddle.y - paddle.height / 2,
+    paddle.w,
+    paddle.h
+  );
+}
+
+// *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* DrawWalls Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
+function drawWalls() {
+  let halfWall = wall * 0.5;
+  ConX.lineWidth = wall;
+  ConX.strokeStyle = COLOR_WALL;
+  ConX.beginPath();
+  ConX.moveTo(halfWall, height);
+  ConX.lineTo(halfWall, halfWall);
+  ConX.lineTo(width - halfWall, halfWall);
+  ConX.lineTo(width - halfWall, height);
+  ConX.stroke();
+}
+
+// *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* newGame Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
+
+function newGame() {
+  paddle = new Paddle(PADDLE_WIDTH, wall, PADDLE_SPEED);
 }
 
 // *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* setDimensions Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
@@ -50,5 +86,18 @@ function setDimensions() {
   canvasEl.height = height;
 }
 
+// the Paddle class
+class Paddle {
+  constructor(paddleWidth, paddleHeight, paddleSpeed) {
+    this.w = paddleWidth * width;
+    this.h = paddleHeight / 2;
+    this.x = canvasEl.width / 2;
+    this.y = canvasEl.height - this.h * 3;
+    this.speed = paddleSpeed * width;
+    this.xV = 0;
+  }
+}
+
 setDimensions();
+newGame();
 playGame();
