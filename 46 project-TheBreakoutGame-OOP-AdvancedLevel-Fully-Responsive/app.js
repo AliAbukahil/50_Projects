@@ -4,9 +4,10 @@ const PADDLE_SPEED = 0.5; // fraction of screen width per second -> it will cros
 const BALL_SPEED = 0.45; // fraction of screen height per second
 const BALL_SPIN = 0.2; // ball deflection of the paddle 0 == no spin, 1 == high spin
 const WALL = 0.2; // wall-ball-paddle size as a fraction of the shortest screen dimension
+const MIN_BOUNCE_ANGLE = 30; // min bounce angle from the horizontal in degrees
 
 // Colors
-const COLOR_BG = "#e64980";
+const COLOR_BG = "black";
 const COLOR_WALL = "grey";
 const COLOR_PADDLE = "white";
 const COLOR_BALL = "black";
@@ -30,8 +31,8 @@ let width, height, wall;
 let paddle, ball, touchX; // touch location
 
 // Arrow keys Events
-document.addEventListener("keydown", keydown);
-document.addEventListener("keyup", keyup);
+document.addEventListener("keydown", keyDown);
+document.addEventListener("keyup", keyUp);
 
 // *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* Resize Window Event *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
 window.addEventListener("resize", setDimensions);
@@ -42,10 +43,18 @@ function playGame() {
 
   // update Functions
   updatePaddle();
+  updateBall();
   // draw Functions
   drawBackground();
   drawWalls();
   drawPaddle();
+  drawBall();
+}
+
+// *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-*applyBallSpeed Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
+function applyBallSpeed(angle) {
+  ball.xV = ball.speed * Math.cos(angle);
+  ball.yV = -ball.speed * Math.sin(angle);
 }
 
 // *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* DrawBackground Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
@@ -54,12 +63,51 @@ function drawBackground() {
   ConX.fillRect(0, 0, canvasEl.width, canvasEl.height);
 }
 
+// *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* drawBall Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
+function drawBall() {
+  ConX.fillStyle = COLOR_BALL;
+  ConX.fillRect(ball.x - ball.w / 2, ball.y - ball.h / 2, ball.w, ball.h);
+}
+
+// *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* updateBall Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
+function updateBall() {
+  // Move the Ball
+  ball.x += (ball.xV / 1000) * 55;
+  ball.y += (ball.yV / 1000) * 55;
+
+  // Bouncing the Ball of the walls
+  if (ball.x < wall + ball.w / 2) {
+    ball.x = wall + ball.w / 2;
+    ball.xV = -ball.xV;
+    // spinBall();
+  } else if (ball.x > canvasEl.width - wall - ball.w / 2) {
+    ball.x = canvasEl.width - wall - ball.w / 2;
+    ball.xV = -ball.xV;
+    // spinBall();
+  } else if (ball.y < wall + ball.h / 2) {
+    ball.y = wall + ball.h / 2;
+    ball.yV = -ball.yV;
+    // spinBall();
+  }
+
+  // Bouncing the ball of the paddle
+  if (
+    ball.y > paddle.y - paddle.h * 0.5 - ball.h * 0.5 &&
+    ball.y < paddle.y + paddle.h * 0.5 &&
+    ball.x > paddle.x - paddle.w * 0.5 - ball.w * 0.5 &&
+    ball.x < paddle.x + paddle.w * 0.5 + ball.w * 0.5
+  ) {
+    ball.y = paddle.y + paddle.h * 0.5 + ball.h * 0.5;
+    ball.yV = -ball.yV;
+  }
+}
+
 // *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* DrawPaddle Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
 function drawPaddle() {
-  ConX.fillStyle = COLOR_PADDLE;
+  // ConX.fillStyle = pupSticky ? PupType.STICKY.color : COLOR_PADDLE;
   ConX.fillRect(
     paddle.x - paddle.w * 0.5,
-    paddle.y - paddle.height / 2,
+    paddle.y - paddle.h / 2,
     paddle.w,
     paddle.h
   );
@@ -68,6 +116,9 @@ function drawPaddle() {
 // *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* ArrowKeys Functions *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
 function keyDown(e) {
   switch (e.keyCode) {
+    case 32: // space key => to serve the ball
+      serveBall();
+      break;
     case 37: // left arrow -> move arrow to left
       movePaddle(DIRECTIONS.LEFT);
       break;
@@ -118,6 +169,19 @@ function drawWalls() {
 
 function newGame() {
   paddle = new Paddle(PADDLE_WIDTH, wall, PADDLE_SPEED);
+  ball = new Ball(wall, BALL_SPEED);
+}
+
+// *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* serveBall Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
+function serveBall() {
+  if (ball.yV !== 0) {
+    return false;
+  }
+
+  let minBounceAngle = (MIN_BOUNCE_ANGLE / 180) * Math.PI; // radians
+  let range = Math.PI - minBounceAngle * 2;
+  let angle = Math.random() * range + minBounceAngle;
+  applyBallSpeed(angle);
 }
 
 // *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* setDimensions Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
@@ -141,6 +205,19 @@ function updatePaddle() {
     paddle.x = wall + paddle.w / 2;
   } else if (paddle.x > canvasEl.width - wall - paddle.w / 2) {
     paddle.x = canvasEl.width - wall - paddle.w / 2;
+  }
+}
+
+// *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* the Ball class  *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* //
+class Ball {
+  constructor(ballSize, ballSpeed) {
+    this.w = ballSize;
+    this.h = ballSize;
+    this.x = paddle.x;
+    this.y = paddle.y - paddle.h / 2 - this.h / 2;
+    this.speed = ballSpeed * height;
+    this.xV = 0;
+    this.yv = 0;
   }
 }
 
