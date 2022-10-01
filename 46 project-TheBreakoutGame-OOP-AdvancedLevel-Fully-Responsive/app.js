@@ -124,6 +124,11 @@ function updateBall() {
   if (ball.y > canvasEl.height) {
     outOfBounds();
   }
+
+  // move the ball with the Paddle
+  if (ball.y > canvasEl.height) {
+    ball.x = paddle.x;
+  }
 }
 
 // *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* DrawPaddle Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
@@ -258,7 +263,7 @@ function touchStart(e) {
   touch(e.touches[0].clientX);
 }
 
-// *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* updatePaddle class  *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* //
+// *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* updatePaddle Function  *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* //
 function updatePaddle() {
   // move the paddle
   if (touch.x != null) {
