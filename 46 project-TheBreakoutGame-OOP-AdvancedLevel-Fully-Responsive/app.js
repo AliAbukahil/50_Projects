@@ -30,6 +30,12 @@ let width, height, wall;
 // initializing the paddle, ball classes
 let paddle, ball, touchX; // touch location
 
+// Touch Events
+canvasEl.addEventListener("touchcancel", touchCancel);
+canvasEl.addEventListener("touchend", touchEnd);
+canvasEl.addEventListener("touchmove", touchMove, { passive: true });
+canvasEl.addEventListener("touchstart", touchStart, { passive: true });
+
 // Arrow keys Events
 document.addEventListener("keydown", keyDown);
 document.addEventListener("keyup", keyUp);
@@ -53,6 +59,16 @@ function playGame() {
 
 // *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-*applyBallSpeed Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
 function applyBallSpeed(angle) {
+  // Keeping the Angle Between two limits - (30 - 150) degrees
+  // console.log("angle default:", (angle / Math.PI) * 180);
+
+  if (angle < Math.PI / 6) {
+    angle = MAth.PI / 6;
+  } else if (angle > (Math.PI * 5) / 6) {
+    angle = (Math.PI * 5) / 6;
+  }
+  // console.log("angle output:", (angle / Math.PI) * 180);
+
   ball.xV = ball.speed * Math.cos(angle);
   ball.yV = -ball.speed * Math.sin(angle);
 }
@@ -93,12 +109,20 @@ function updateBall() {
   // Bouncing the ball of the paddle
   if (
     ball.y > paddle.y - paddle.h * 0.5 - ball.h * 0.5 &&
-    ball.y < paddle.y + paddle.h * 0.5 &&
+    ball.y < paddle.y + paddle.h * 0.5 + ball.h * 0.5 &&
     ball.x > paddle.x - paddle.w * 0.5 - ball.w * 0.5 &&
     ball.x < paddle.x + paddle.w * 0.5 + ball.w * 0.5
   ) {
     ball.y = paddle.y + paddle.h * 0.5 + ball.h * 0.5;
     ball.yV = -ball.yV;
+    // Modify the angle based on ball spin
+    let angle = Math.atan2((-ball.xV, ball.xV));
+    angle += (Math.random() * Math.PI) / 2 - (Math.PI / 4) * BALL_SPIN;
+  }
+
+  // ball moves out of the Canvas
+  if (ball.y > canvasEl.height) {
+    outOfBounds();
   }
 }
 
@@ -184,6 +208,11 @@ function serveBall() {
   applyBallSpeed(angle);
 }
 
+// *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-*  outOfBounds Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
+function outOfBound() {
+  newGame();
+}
+
 // *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* setDimensions Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
 function setDimensions() {
   height = window.innerHeight;
@@ -193,9 +222,54 @@ function setDimensions() {
   canvasEl.height = height;
 }
 
+// ---------------------------Touch Events Functions------------
+// https://www.chromestatus.com/feature/5745543795965952
+// https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
+// touch function
+
+// function touch(x) {
+//   if (!x) {
+//     movePaddle(DIRECTION.STOP);
+//   } else if (x > paddle.x) {
+//     movePaddle(DIRECTION.RIGHT);
+//   } else if (x < paddle.x) {
+//     movePaddle(DIRECTION.LEFT);
+//   }
+// }
+
+function touchCancel(e) {
+  touchX = null;
+  movePaddle(DIRECTIONS.STOP);
+}
+
+function touchEnd(e) {
+  touchX = null;
+  movePaddle(DIRECTIONS.STOP);
+}
+
+function touchMove(e) {
+  touch(e.touches[0].clientX);
+}
+
+function touchStart(e) {
+  if (serveBall()) {
+    return;
+  }
+  touch(e.touches[0].clientX);
+}
+
 // *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* updatePaddle class  *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* //
 function updatePaddle() {
   // move the paddle
+  if (touch.x != null) {
+    if (touchX > paddle.x + wall) {
+      movePaddle(DIRECTION.RIGHT);
+    } else if (touchX < paddle.x - wall) {
+      movePaddle(DIRECTIONS.LEFT);
+    } else {
+      movePaddle(DIRECTIONS.STOP);
+    }
+  }
   // let lastPaddleX = paddle.x;
   paddle.x += (paddle.xV / 1000) * 20;
 
