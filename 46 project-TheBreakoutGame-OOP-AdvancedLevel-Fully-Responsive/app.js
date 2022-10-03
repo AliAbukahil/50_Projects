@@ -4,12 +4,12 @@ const PADDLE_SPEED = 0.5; // fraction of screen width per second -> it will cros
 const BALL_SPEED = 0.45; // fraction of screen height per second
 const BALL_SPIN = 0.2; // ball deflection of the paddle 0 == no spin, 1 == high spin
 const WALL = 0.2; // wall-ball-paddle size as a fraction of the shortest screen dimension
-const MIN_BOUNCE_ANGLE = 30; // min bounce angle from the horizontal in degrees
 const BRICK_ROWS = 8; // starting number of brick rows
 const BRICK_COLS = 14; // original number of brick cols
 const BRICK_GAP = 0.3; // brick gap as a fraction of wall width
 const MARGIN = 4; // number of empty rows above the bricks - empty spavce b/t the top of the bricks and the score board
 const MAX_LEVEL = 10; // max game level (+2 rows of bricks per level)
+const MIN_BOUNCE_ANGLE = 30; // min bounce angle from the horizontal in degrees
 
 // Colors
 const COLOR_BG = "black";
@@ -59,24 +59,18 @@ function playGame() {
   // update Functions
   updatePaddle();
   updateBall();
+  updateBricks();
+
   // draw Functions
   drawBackground();
   drawWalls();
   drawPaddle();
-  drawBricks()
+  drawBricks();
   drawBall();
 }
 
 // *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-*applyBallSpeed Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
 function applyBallSpeed(angle) {
-  // Keeping the Angle Between two limits - (30 - 150) degrees
-  // console.log("angle default:", (angle / Math.PI) * 180);
-
-  if (angle < Math.PI / 6) {
-    angle = MAth.PI / 6;
-  } else if (angle > (Math.PI * 5) / 6) {
-    angle = (Math.PI * 5) / 6;
-  }
   // console.log("angle output:", (angle / Math.PI) * 180);
 
   ball.xV = ball.speed * Math.cos(angle);
@@ -103,19 +97,18 @@ function createBricks() {
   bricks = [];
   let cols = BRICK_COLS;
   let rows = BRICK_ROWS + level * 2;
-  let color, left, rank, rankHigh, score spdMult, top;
+  let color, left, rank, rankHigh, score, spdMult, top;
   rankHigh = rows / 2 - 1;
-  for(let i = 0; i < rows; i++) {
+  for (let i = 0; i < rows; i++) {
     bricks[i] = [];
     rank = Math.floor(i / 2);
-    color = getBrickColor(rank, rankHigh)
-    top = wall + ( MARGIN + i) * rowH;
-    for(let i = 0; j < cols; j++) {
-      left = wall +gap +j * colw
-      bricks[i][j] = new Brick(left, top, w, h, color, score, spdMult)
+    color = getBrickColor(rank, rankHigh);
+    top = wall + (MARGIN + i) * rowH;
+    for (let i = 0; j < cols; j++) {
+      left = wall + gap + j * colw;
+      bricks[i][j] = new Brick(left, top, w, h, color, score, spdMult);
     }
   }
-
 }
 
 // *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* DrawBackground Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
@@ -132,11 +125,13 @@ function drawBall() {
 
 // *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* drawBricks Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
 function drawBricks() {
-  for(let row of bricks) {
-    for(let brick of row) {
+  for (let row of bricks) {
+    for (let brick of row) {
+      if (brick == null) {
+        continue;
+      }
       ConX.fillStyle = brick.color;
       ConX.fillRect(brick.left, brick.top, brick.w, brick.h);
-
     }
   }
 }
@@ -144,11 +139,13 @@ function drawBricks() {
 // *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* getBrickColor Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
 function getBrickColor(rank, highestRank) {
   // red = 0, orange = 0.33, yellow = 0,67, green = 1;
-  let fraction = rank / highestRank 
-  let r,g,b = 0;
+  let fraction = rank / highestRank;
+  let r,
+    g,
+    b = 0;
 
   // red to orange to yellow (increase the green)
-  if(fraction <= 0.67) {
+  if (fraction <= 0.67) {
     r = 255;
     g = (255 * fraction) / 0.67;
   }
@@ -156,10 +153,10 @@ function getBrickColor(rank, highestRank) {
   // yellow to green (reduce of red)
   else {
     r = (255 * (1 - fraction)) / 0.66;
-    g = 255
+    g = 255;
   }
 
-  return `rgb(${r}, ${g}, ${b})`
+  return `rgb(${r}, ${g}, ${b})`;
 }
 
 // *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* updateBall Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
@@ -172,15 +169,15 @@ function updateBall() {
   if (ball.x < wall + ball.w / 2) {
     ball.x = wall + ball.w / 2;
     ball.xV = -ball.xV;
-    // spinBall();
+    spinBall();
   } else if (ball.x > canvasEl.width - wall - ball.w / 2) {
     ball.x = canvasEl.width - wall - ball.w / 2;
     ball.xV = -ball.xV;
-    // spinBall();
+    spinBall();
   } else if (ball.y < wall + ball.h / 2) {
     ball.y = wall + ball.h / 2;
     ball.yV = -ball.yV;
-    // spinBall();
+    spinBall();
   }
 
   // Bouncing the ball of the paddle
@@ -192,9 +189,8 @@ function updateBall() {
   ) {
     ball.y = paddle.y + paddle.h * 0.5 + ball.h * 0.5;
     ball.yV = -ball.yV;
-    // Modify the angle based on ball spin
-    let angle = Math.atan2((-ball.xV, ball.xV));
-    angle += (Math.random() * Math.PI) / 2 - (Math.PI / 4) * BALL_SPIN;
+
+    spinBall();
   }
 
   // ball moves out of the Canvas
@@ -279,7 +275,7 @@ function newGame() {
 
   level = 0;
 
-  createBricks()
+  createBricks();
 }
 
 // *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* serveBall Function *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*- //
@@ -308,6 +304,33 @@ function setDimensions() {
   canvasEl.height = height;
 
   newGame();
+}
+
+// ---------------------------spinBall Function------------
+function spinBall() {
+  let upwards = ball.yV < 0;
+
+  // modify the angle based off the ball spin
+  // find the current angle
+  let angle = Math.atan2(-ball.yV, ball.xV);
+  angle += ((Math.random() * Math.PI) / 2 - Math.PI / 4) * BALL_SPIN;
+
+  let minBounceAngle = (MIN_BOUNCE_ANGLE / 180) * Math.PI;
+  if (upwards) {
+    if (angle < minBounceAngle) {
+      angle = minBounceAngle;
+    } else if (angle > Math.PI - minBounceAngle) {
+      angle = Math.PI - minBounceAngle;
+    }
+  } else {
+    if (angle > -minBounceAngle) {
+      angle = -minBounceAngle;
+    } else if (angle < -Math.PI + minBounceAngle) {
+      angle = -Math.PI + minBounceAngle;
+    }
+  }
+
+  applyBallSpeed(angle);
 }
 
 // ---------------------------Touch Events Functions------------
@@ -344,6 +367,29 @@ function touchStart(e) {
     return;
   }
   touch(e.touches[0].clientX);
+}
+
+// *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* updateBricks Function  *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* //
+function updateBricks() {
+  // check for ball collision
+  OUTER: for (let i = 0; i < bricks.length; i++) {
+    for (let j = 0; j < BRICK_COLS; i++) {
+      if (bricks[i][j] != null && bricks[i][j].intersect(ball)) {
+        if (ball.yV < 0) {
+          //upwards
+          ball.y = bricks[i][j].bottom + ball.h * 0.5;
+        }
+        // Downwards
+        else {
+          ball.y = bricks[i][j].top - ball.h * 0.5;
+        }
+        bricks[i][j] = null;
+        ball.yV = -ball.yV;
+        spinBall();
+        break OUTER;
+      }
+    }
+  }
 }
 
 // *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* updatePaddle Function  *-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-* //
@@ -391,8 +437,22 @@ class Brick {
     this.w = w;
     this.h = h;
     this.color = color;
-    // this.score = score;
-    // this.spdMult = spdMult;
+    this.score = score;
+    this.spdMult = spdMult;
+
+    this.intersect = (ball) => {
+      let ballBottom = ball.y + ball.h * 0.5;
+      let ballLeft = ball.x - ball.w * 0.5;
+      let ballRight = ball.x + ball.w * 0.5;
+      let ballTop = ball.y - ball.y - ball.h * 0.5;
+
+      return (
+        this.left < ballRight &&
+        ballLeft < this.right &&
+        this.bottom > ballTop &&
+        ballBottom > this.top
+      );
+    };
   }
 }
 
