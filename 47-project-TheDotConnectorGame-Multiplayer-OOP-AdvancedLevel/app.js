@@ -48,7 +48,10 @@ let currentCells, playersTurn, squares;
 let timeEnd;
 
 // MouseEvent Listener
-canvasEl.addEventListener("mousemove", highlightGrid)
+canvasEl.addEventListener("mousemove", highlightGrid);
+
+// click El
+canvasEl.addEventListener("click", click);
 
 // -----------------------THE Game Loop ------------------------
 function playGame() {
@@ -58,6 +61,15 @@ function playGame() {
   drawSquares();
   drawGrid();
   // drawScores();
+}
+
+// -----------------------Click Function ------------------------
+function click(e) {
+  if (timeEnd > 0) {
+    return;
+  }
+
+  selectSide();
 }
 
 // -----------------------drawBoard Function ------------------------
@@ -144,11 +156,11 @@ function highlightGrid(e) {
   highlightSide(x, y);
 }
 
-//-----------------------highlightSide Function ------------------------
-function highlightSide(x,y) {
-  // clear previous highlighting
-  for(let row of squares) {
-    for(let square of row) {
+// ---------------------------------highlightSide Function *-*-*-*-*-*
+function highlightSide(x, y) {
+  // clear [reviuos highlighting
+  for (let row of squares) {
+    for (let square of row) {
       square.highlight = null;
     }
   }
@@ -156,17 +168,59 @@ function highlightSide(x,y) {
   let rows = squares.length;
   let cols = squares[0].length;
 
-  OUTER: for(let i = 0; i < rows; i++) {
-    for(let j = 0; j < cols; j++) {
+  currentCells = [];
+
+  OUTER: for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
       if (squares[i][j].contains(x, y)) {
         let side = squares[i][j].highlightSide(x, y);
+
+        if (side != null) {
+          currentCells.push({ row: i, col: j });
+        }
+
+        // determine the neighbour
+        let row = i,
+          col = j,
+          highlight,
+          neighbour = true;
+
+        if (side == Side.LEFT && j > 0) {
+          // from the neighbours perspective
+          col = j - 1;
+          highlight = Side.RIGHT;
+        } else if (side == Side.RIGHT && j < cols - 1) {
+          // from the neighbours perspective
+          col = j + 1;
+          highlight = Side.LEFT;
+        } else if (side == Side.TOP && i > 0) {
+          // from the neighbours perspective
+          row = i - 1;
+          highlight = Side.BOTTOM;
+        } else if (side == Side.BOTTOM && i < rows - 1) {
+          // from the neighbours perspective
+          row = i + 1;
+          highlight = Side.TOP;
+        } else {
+          neighbour = false;
+        }
+
+        // highlighting the nieghbour
+        if (neighbour) {
+          squares[row][col].highlight = highlight;
+          currentCells.push({ row: row, col: col });
+        }
+
         break OUTER;
+      }
     }
   }
 }
 
 // -----------------------newGame Function ------------------------
 function newGame() {
+  currentCells = [];
+
   playersTurn = Math.random() >= 0.5;
 
   // set up the Squares array
@@ -176,6 +230,32 @@ function newGame() {
     for (let j = 0; j < GRID_SIZE; j++) {
       squares[i][j] = new Square(getGridX(j), getGridY(i), CELL, CELL);
     }
+  }
+}
+
+// ---------------------------------selectSide Function *-*-*-*-*-*
+function selectSide() {
+  if (currentCells == null || currentCells.length == 0) {
+    return;
+  }
+
+  // select side
+  let filledSquare = false;
+  for (let cell of currentCells) {
+    if (squares[cell.row][cell.col].selectSide()) {
+      filledSquare = true;
+    }
+  }
+  currentCells = [];
+
+  if (filledSquare) {
+    // handle game over
+    if (scoreRI + scoreAI == GRID_SIZE * GRID_SIZE) {
+      timeEnd = Math.ceil(DELAY_END * FPS);
+    }
+  } else {
+    // switch the player
+    playersTurn = !playersTurn;
   }
 }
 
@@ -196,14 +276,15 @@ class Square {
     this.sideTop = { owner: null, selected: false };
   }
 
-    contains = (x, y) => {
+  contains = (x, y) => {
     return x >= this.left && x < this.right && y >= this.top && y < this.bottom;
   };
 
-    drawFill = () => {
+  drawFill = () => {
     if (this.owner == null) {
       return;
     }
+  };
 
   drawSide = (side, color) => {
     switch (side) {
@@ -233,6 +314,22 @@ class Square {
     if (this.highlight != null) {
       this.drawSide(this.highlight, getColor(playersTurn, true));
     }
+    // --------------------------
+    if (this.sideBottom.selected) {
+      this.drawSide(Side.BOTTOM, getColor(this.sideBottom.owner, false));
+    }
+
+    if (this.sideLeft.selected) {
+      this.drawSide(Side.LEFT, getColor(this.sideLeft.owner, false));
+    }
+
+    if (this.sideRight.selected) {
+      this.drawSide(Side.RIGHT, getColor(this.sideRight.owner, false));
+    }
+
+    if (this.sideTop.selected) {
+      this.drawSide(Side.TOP, getColor(this.sideTop.owner, false));
+    }
   };
 
   highlightSide = (x, y) => {
@@ -243,17 +340,65 @@ class Square {
 
     let distClosest = Math.min(distBottom, distLeft, distRight, distTop);
 
-    if(distClosest == distBottom && !this.sideBottom.selected ) {
-      this.highlight = Side.BOTTOM
-    } else if(distClosest == distLeft && !this.sideLeft.selected ) {
-      this.highlight = Side.LEFT
-  }else if(distClosest == distRight && !this.sideRight.selected ) {
-      this.highlight = Side.RIGHT
-  }else if(distClosest == distTop && !this.sideTop.selected ) {
-      this.highlight = Side.TOP
+    if (distClosest == distBottom && !this.sideBottom.selected) {
+      this.highlight = Side.BOTTOM;
+    } else if (distClosest == distLeft && !this.sideLeft.selected) {
+      this.highlight = Side.LEFT;
+    } else if (distClosest == distRight && !this.sideRight.selected) {
+      this.highlight = Side.RIGHT;
+    } else if (distClosest == distTop && !this.sideTop.selected) {
+      this.highlight = Side.TOP;
+    }
+
+    return this.highlight;
   };
 
-  return this.highlight
+  selectSide = () => {
+    if (this.highlight == null) {
+      return;
+    }
+
+    // select the highlighted side
+    switch (this.highlight) {
+      case Side.BOTTOM:
+        this.sideBottom.owner = playersTurn;
+        this.sideBottom.selected = true;
+        break;
+
+      case Side.LEFT:
+        this.sideLeft.owner = playersTurn;
+        this.sideLeft.selected = true;
+        break;
+
+      case Side.RIGHT:
+        this.sideRight.owner = playersTurn;
+        this.sideRight.selected = true;
+        break;
+
+      case Side.TOP:
+        this.sideTop.owner = playersTurn;
+        this.sideTop.selected = true;
+        break;
+    }
+
+    this.highlight = null;
+
+    this.numSelected++;
+    if (this.numSelected == 4) {
+      this.owner = playersTurn;
+
+      // handle score
+      if (playersTurn) {
+        scoreRI++;
+      } else {
+        scoreAI++;
+      }
+
+      return true;
+    }
+
+    return false;
+  };
 }
 
 newGame();
