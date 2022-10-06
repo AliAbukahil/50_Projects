@@ -45,14 +45,19 @@ conX.textBaseline = "middle";
 // Game Variables
 let currentCells, playersTurn, squares;
 
+let timeEnd;
+
+// MouseEvent Listener
+canvasEl.addEventListener("mousemove", highlightGrid)
+
 // -----------------------THE Game Loop ------------------------
 function playGame() {
   requestAnimationFrame(playGame);
 
   drawBoard();
   drawSquares();
-
   drawGrid();
+  // drawScores();
 }
 
 // -----------------------drawBoard Function ------------------------
@@ -125,10 +130,40 @@ function getGridY(row) {
   return MARGIN + CELL * row;
 }
 
-// -----------------------highlightSide Function ------------------------
-// function highlightSide(x,y) {
+// -----------------------highlightGrid Function ------------------------
+function highlightGrid(e) {
+  if (timeEnd > 0) {
+    return;
+  }
 
-// }
+  // get mouse position relative to canvas
+  let x = e.clientX - canvasRect.left;
+  let y = e.clientY - canvasRect.top;
+
+  // hihgloight the square's side
+  highlightSide(x, y);
+}
+
+//-----------------------highlightSide Function ------------------------
+function highlightSide(x,y) {
+  // clear previous highlighting
+  for(let row of squares) {
+    for(let square of row) {
+      square.highlight = null;
+    }
+  }
+
+  let rows = squares.length;
+  let cols = squares[0].length;
+
+  OUTER: for(let i = 0; i < rows; i++) {
+    for(let j = 0; j < cols; j++) {
+      if (squares[i][j].contains(x, y)) {
+        let side = squares[i][j].highlightSide(x, y);
+        break OUTER;
+    }
+  }
+}
 
 // -----------------------newGame Function ------------------------
 function newGame() {
@@ -160,6 +195,15 @@ class Square {
     this.sideRight = { owner: null, selected: false };
     this.sideTop = { owner: null, selected: false };
   }
+
+    contains = (x, y) => {
+    return x >= this.left && x < this.right && y >= this.top && y < this.bottom;
+  };
+
+    drawFill = () => {
+    if (this.owner == null) {
+      return;
+    }
 
   drawSide = (side, color) => {
     switch (side) {
