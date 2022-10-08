@@ -1,4 +1,4 @@
-// game Parameters
+// Game Parameters
 const HEIGHT = 750;
 const GRID_SIZE = 10;
 const FPS = 60;
@@ -12,14 +12,24 @@ const DOT = STROKE;
 const MARGIN = HEIGHT - (GRID_SIZE + 1) * CELL;
 
 // Colors
-const COLOR_BRAND = "#0f3057";
+const COLOR_BOARD = "#0f3057";
 const COLOR_BORDER = "yellow";
 const COLOR_DOT = "white";
 const COLOR_AI = "orange";
-const COLOR_AI_LIGHT = "rgba(255, 166, 0 , 0.3)";
-const COLOR_PLAYER = "orange";
-const COLOR_PLAYER_LIGHT = "rgba(126, 252, 0 , 0.3)";
+const COLOR_AI_LIGHT = "rgba(255, 166, 0, 0.3";
+const COLOR_PLAYER = "lawngreen";
+const COLOR_PLAYER_LIGHT = "rgba(126, 252, 0, 0.3";
 const COLOR_TIE = "white";
+
+// Text Variables
+const TEXT_AI = "Player2";
+const TEXT_AI_SML = "P2";
+const TEXT_PLAYER = "Player1";
+const TEXT_PLAYER_SML = "P1";
+const TEXT_SIZE_CELL = CELL / 2.5;
+const TEXT_SIZE_TOP = MARGIN / 6;
+const TEXT_TIE = "Draw";
+const TEXT_WIN = "Won";
 
 // Side Object
 const Side = {
@@ -29,7 +39,7 @@ const Side = {
   TOP: 3,
 };
 
-// canvas implementation
+// Canvas
 let canvasEl = document.createElement("canvas");
 canvasEl.height = HEIGHT;
 canvasEl.width = WIDTH;
@@ -45,25 +55,27 @@ conX.textBaseline = "middle";
 // Game Variables
 let currentCells, playersTurn, squares;
 
+let scoreAI, scoreRI;
+
 let timeEnd;
 
-// MouseEvent Listener
+// Mousemove Event Listener
 canvasEl.addEventListener("mousemove", highlightGrid);
 
-// click El
+// click EL
 canvasEl.addEventListener("click", click);
 
-// -----------------------THE Game Loop ------------------------
+// ---------------------------------The Game Loop *-*-*-*-*-*
 function playGame() {
   requestAnimationFrame(playGame);
 
   drawBoard();
   drawSquares();
   drawGrid();
-  // drawScores();
+  drawScores();
 }
 
-// -----------------------Click Function ------------------------
+// ---------------------------------click Function *-*-*-*-*-*
 function click(e) {
   if (timeEnd > 0) {
     return;
@@ -72,9 +84,9 @@ function click(e) {
   selectSide();
 }
 
-// -----------------------drawBoard Function ------------------------
-function drawBoard(params) {
-  conX.fillStyle = COLOR_BRAND;
+// ---------------------------------drawBoard Function *-*-*-*-*-*
+function drawBoard() {
+  conX.fillStyle = COLOR_BOARD;
   conX.strokeStyle = COLOR_BORDER;
   conX.fillRect(0, 0, WIDTH, HEIGHT);
   conX.strokeRect(
@@ -85,7 +97,7 @@ function drawBoard(params) {
   );
 }
 
-// -----------------------drawDot Function ------------------------
+// ---------------------------------drawDot Function *-*-*-*-*-*
 function drawDot(x, y) {
   conX.fillStyle = COLOR_DOT;
   conX.beginPath();
@@ -93,18 +105,16 @@ function drawDot(x, y) {
   conX.fill();
 }
 
-// -----------------------drawGrid Function ------------------------
+// ---------------------------------drawGrid Function *-*-*-*-*-*
 function drawGrid() {
-  // i is for Y Axis
   for (let i = 0; i < GRID_SIZE + 1; i++) {
-    // j for X Axis
     for (let j = 0; j < GRID_SIZE + 1; j++) {
       drawDot(getGridX(j), getGridY(i));
     }
   }
 }
 
-// -----------------------drawLine Function ------------------------
+// ---------------------------------drawLine Function *-*-*-*-*-*
 function drawLine(x0, y0, x1, y1, color) {
   conX.strokeStyle = color;
   conX.beginPath();
@@ -113,36 +123,85 @@ function drawLine(x0, y0, x1, y1, color) {
   conX.stroke();
 }
 
-// -----------------------drawSquares Function ------------------------
-function drawSquares() {
-  for (let row of squares) {
-    for (let Square of row) {
-      Square.drawSides();
-      Square.drawFill();
+// ---------------------------------drawScores Function *-*-*-*-*-*
+function drawScores() {
+  let colorAI = playersTurn ? COLOR_AI_LIGHT : COLOR_AI;
+  let colorRI = playersTurn ? COLOR_PLAYER : COLOR_PLAYER_LIGHT;
+  drawText(TEXT_PLAYER, WIDTH * 0.25, MARGIN * 0.25, colorRI, TEXT_SIZE_TOP);
+  drawText(scoreRI, WIDTH * 0.25, MARGIN * 0.6, colorRI, TEXT_SIZE_TOP * 2);
+
+  drawText(TEXT_AI, WIDTH * 0.75, MARGIN * 0.25, colorAI, TEXT_SIZE_TOP);
+  drawText(scoreAI, WIDTH * 0.75, MARGIN * 0.6, colorAI, TEXT_SIZE_TOP * 2);
+
+  // game over text
+  if (timeEnd > 0) {
+    timeEnd--;
+
+    // handle a tie
+    if (scoreRI == scoreAI) {
+      drawText(TEXT_TIE, WIDTH * 0.5, MARGIN * 0.6, COLOR_TIE, TEXT_SIZE_TOP);
+    } else {
+      let playerWins = scoreRI > scoreAI;
+      let color = playerWins ? COLOR_PLAYER : COLOR_AI;
+      let text = playerWins ? TEXT_PLAYER : TEXT_AI;
+
+      drawText(text, WIDTH * 0.5, MARGIN * 0.5, color, TEXT_SIZE_TOP);
+      drawText(TEXT_WIN, WIDTH * 0.5, MARGIN * 0.7, color, TEXT_SIZE_TOP);
+    }
+
+    // start a new game
+    if (timeEnd == 0) {
+      newGame();
     }
   }
 }
 
-// -----------------------getColor Function ------------------------
+// ---------------------------------drawSquares Function *-*-*-*-*-*
+function drawSquares() {
+  for (let row of squares) {
+    for (let square of row) {
+      square.drawSides();
+      square.drawFill();
+    }
+  }
+}
+
+// ---------------------------------drawText Function *-*-*-*-*-*
+function drawText(text, x, y, color, size) {
+  conX.fillStyle = color;
+  conX.font = `${size}px sans-serif`;
+  conX.fillText(text, x, y);
+}
+
+// ---------------------------------getColor Function *-*-*-*-*-*
 function getColor(player, light) {
   if (player) {
     return light ? COLOR_PLAYER_LIGHT : COLOR_PLAYER;
   } else {
-    return light ? COLOR_PLAYER_LIGHT : COLOR_AI;
+    return light ? COLOR_AI_LIGHT : COLOR_AI;
   }
 }
 
-// -----------------------getGridX Function ------------------------
+// ---------------------------------getText Function *-*-*-*-*-*
+function getText(player, small) {
+  if (player) {
+    return small ? TEXT_PLAYER_SML : TEXT_PLAYER;
+  } else {
+    return small ? TEXT_AI_SML : TEXT_AI;
+  }
+}
+
+// ---------------------------------getGridX Function *-*-*-*-*-*
 function getGridX(col) {
   return CELL * (col + 1);
 }
 
-// -----------------------getGridY Function ------------------------
+// ---------------------------------getGridX Function *-*-*-*-*-*
 function getGridY(row) {
   return MARGIN + CELL * row;
 }
 
-// -----------------------highlightGrid Function ------------------------
+// ---------------------------------highlightGrid Function *-*-*-*-*-*
 function highlightGrid(e) {
   if (timeEnd > 0) {
     return;
@@ -217,13 +276,18 @@ function highlightSide(x, y) {
   }
 }
 
-// -----------------------newGame Function ------------------------
+// ---------------------------------newGame Function *-*-*-*-*-*
 function newGame() {
   currentCells = [];
 
   playersTurn = Math.random() >= 0.5;
 
-  // set up the Squares array
+  scoreAI = 0;
+  scoreRI = 0;
+
+  timeEnd = 0;
+
+  // set up the squares array
   squares = [];
   for (let i = 0; i < GRID_SIZE; i++) {
     squares[i] = [];
@@ -270,6 +334,7 @@ class Square {
     this.top = y;
     this.highlight = null;
     this.numSelected = 0;
+    this.owner = null;
     this.sideBottom = { owner: null, selected: false };
     this.sideLeft = { owner: null, selected: false };
     this.sideRight = { owner: null, selected: false };
@@ -284,36 +349,52 @@ class Square {
     if (this.owner == null) {
       return;
     }
+
+    // draw a light background
+    conX.fillStyle = getColor(this.owner, true);
+    conX.fillRect(
+      this.left + STROKE,
+      this.top + STROKE,
+      this.w - STROKE * 2,
+      this.h - STROKE * 2
+    );
+
+    // owner text
+    drawText(
+      getText(this.owner, true),
+      this.left + this.w / 2,
+      this.top + this.h / 2,
+      getColor(this.owner, false),
+      TEXT_SIZE_CELL
+    );
   };
 
   drawSide = (side, color) => {
     switch (side) {
-      case side.BOTTOM:
+      case Side.BOTTOM:
         drawLine(this.left, this.bottom, this.right, this.bottom, color);
         break;
 
-      case side.LEFT:
+      case Side.LEFT:
         drawLine(this.left, this.top, this.left, this.bottom, color);
         break;
 
-      case side.RIGHT:
+      case Side.RIGHT:
         drawLine(this.right, this.top, this.right, this.bottom, color);
         break;
 
-      case side.TOP:
+      case Side.TOP:
         drawLine(this.left, this.top, this.right, this.top, color);
-        break;
-
-      default:
         break;
     }
   };
 
   drawSides = () => {
-    // Highlighting
+    // highlighting
     if (this.highlight != null) {
       this.drawSide(this.highlight, getColor(playersTurn, true));
     }
+
     // --------------------------
     if (this.sideBottom.selected) {
       this.drawSide(Side.BOTTOM, getColor(this.sideBottom.owner, false));
@@ -336,7 +417,7 @@ class Square {
     let distBottom = this.bottom - y;
     let distLeft = x - this.left;
     let distRight = this.right - x;
-    let distTop = this.top;
+    let distTop = y - this.top;
 
     let distClosest = Math.min(distBottom, distLeft, distRight, distTop);
 
