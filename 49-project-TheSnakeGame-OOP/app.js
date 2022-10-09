@@ -25,15 +25,66 @@ const snakeBody = [];
 //----------------------------------- Arrow keys Event Listener
 document.addEventListener("keydown", keyDown);
 
+const eatSnack = new Audio("eat.wav");
+
 // ------------------------------------- The Game Loop
 function playGame() {
   changeSnakePosition();
+
+  // Handling game over
+  let result = gameOver();
+  if (result) {
+    return;
+  }
+
   clearScreen();
   snackColiDete();
   drawSnack();
   drawSnake();
+  drawScore();
 
   setTimeout(playGame, 1000 / speed);
+}
+
+// -------------------------------------------gameOver Function
+function gameOver() {
+  let gameOver = false;
+
+  if (xV === 0 && yV === 0) return false;
+
+  // checking for wall collision
+  if (
+    snakeHeadX < 0 ||
+    snakeHeadX === tileCount ||
+    snakeHeadY < 0 ||
+    snakeHeadY === tileCount
+  ) {
+    gameOver = true;
+  }
+
+  // checking the snake body collision
+  for (let i = 0; i < snakeBody.length; i++) {
+    let part = snakeBody[i];
+    if (part.x === snakeHeadX && part.y === snakeHeadY) {
+      gameOver = true;
+      break;
+    }
+  }
+
+  if (gameOver) {
+    conX.fillStyle = "white";
+    conX.font = "50px sans-serif";
+    conX.fillText("GAME OVER", canvasEl.width / 8, canvasEl.height / 2);
+  }
+
+  return gameOver;
+}
+
+// ------------------------------drawScore Function
+function drawScore() {
+  conX.fillStyle = "white";
+  conX.font = "15px sans-serif";
+  conX.fillText(`Score: ${score}`, 20, 20);
 }
 
 // --------------------------------------------- clearScreen Function
