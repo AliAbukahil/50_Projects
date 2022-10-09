@@ -19,6 +19,9 @@ let score = 0;
 // derived Dimension
 let tileSize = canvasEl.width / tileCount;
 
+// snake body Array
+const snakeBody = [];
+
 //----------------------------------- Arrow keys Event Listener
 document.addEventListener("keydown", keyDown);
 
@@ -26,6 +29,8 @@ document.addEventListener("keydown", keyDown);
 function playGame() {
   changeSnakePosition();
   clearScreen();
+  snackColiDete();
+  drawSnack();
   drawSnake();
 
   setTimeout(playGame, 1000 / speed);
@@ -39,6 +44,18 @@ function clearScreen() {
 
 // ---------------------------------------- drawSnake Function
 function drawSnake() {
+  conX.fillStyle = "orange";
+  for (let i = 0; i < snakeBody.length; i++) {
+    let part = snakeBody[i];
+    conX.fillRect(part.x * tileCount, part.y * tileCount, tileSize, tileSize);
+  }
+
+  snakeBody.push(new SnakeBody(snakeHeadX, snakeHeadY));
+
+  if (snakeBody.length > snakeTailLength) {
+    snakeBody.shift();
+  }
+
   conX.fillStyle = "green";
   conX.fillRect(
     snakeHeadX * tileCount,
@@ -52,6 +69,26 @@ function drawSnake() {
 function changeSnakePosition() {
   snakeHeadX = snakeHeadX + xV;
   snakeHeadY = snakeHeadY + yV;
+}
+
+// ----------------------------------- drawSnack Function
+
+function drawSnack() {
+  conX.fillStyle = "red";
+  conX.fillRect(snackX * tileCount, snackY * tileCount, tileSize, tileSize);
+}
+
+// --------------------------- snackColiDete function
+
+function snackColiDete() {
+  if (snackX === snakeHeadX && snackY === snakeHeadY) {
+    snackX = Math.floor(Math.random() * tileCount);
+    snackY = Math.floor(Math.random() * tileCount);
+    snakeTailLength++;
+    score++;
+    speed++;
+    eatSnack.play();
+  }
 }
 
 // --------------------------------------------- keyDown Function
@@ -81,6 +118,14 @@ function keyDown(e) {
     if (xV === -1) return;
     xV = 1;
     yV = 0;
+  }
+}
+
+// ---------------------------The SnakeBody Class
+class SnakeBody {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
   }
 }
 
